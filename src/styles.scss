@@ -2,23 +2,26 @@
 
 :root {
   --font: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --ink: #1F2A30;
-  --ink-soft: #5B6870;
-  --muted: #A7AEB2;
-  --line: #DDE2E2;
-  --page: #EDEFEE;
-  --surface: #FBFBFA;
-  --surface-2: #F3F5F4;
-  --velvet: #1E4D5C;
-  --velvet-deep: #102A33;
-  --brass: #C8963E;
-  --brass-soft: #EBD3A4;
-  --free: #2E8B6A;
+  --font-display: 'Playfair Display', Georgia, serif;
+
+  --ink: #EEE7D9;
+  --ink-soft: #A89C87;
+  --muted: #5C574C;
+  --line: #34302A;
+  --page: #121110;
+  --surface: #1C1A16;
+  --surface-2: #24211C;
+  --velvet: #C6A15B;
+  --velvet-deep: #8B6F3D;
+  --brass: #C6A15B;
+  --brass-soft: #E4C98A;
+  --free: #83A583;
   --pending: #D9A42B;
-  --taken: #C4453C;
+  --taken: #B06B60;
+  --ink-on-accent: #17140F;
 }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body { font-family: var(--font); color: var(--ink); background: var(--page); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
-h1, h2 { font-weight: 700; }
+h1, h2 { font-weight: 600; font-family: var(--font-display); }
