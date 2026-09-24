@@ -49,13 +49,6 @@ public static class SeedData
 
     private static void AddFloorPlan(AppDbContext db, string eventId, bool withReservedTables)
     {
-        db.Packages.AddRange(
-            new TablePackage { Id = $"{eventId}-kibla-tuborg", EventId = eventId, Name = "Kibla Tuborg", Persons = 4, Price = 50, Description = "6 × Tuborg, 1 × shisha, grickalice" },
-            new TablePackage { Id = $"{eventId}-kibla-somersby", EventId = eventId, Name = "Kibla Somersby", Persons = 4, Price = 50, Description = "6 × Somersby bezalkoholni, 1 × shisha, grickalice" },
-            new TablePackage { Id = $"{eventId}-kibla-redbull", EventId = eventId, Name = "Kibla Red Bull", Persons = 4, Price = 60, Description = "6 × Red Bull, 1 × shisha, grickalice" },
-            new TablePackage { Id = $"{eventId}-kibla-fast", EventId = eventId, Name = "Kibla Fast", Persons = 4, Price = 45, Description = "6 × Fast, 1 × shisha, grickalice" }
-        );
-
         db.FloorElements.AddRange(
             new FloorElementEntity { EventId = eventId, Kind = "bar", X = 5, Y = 108, W = 189, H = 41, Text = "Šank" },
             new FloorElementEntity { EventId = eventId, Kind = "label", X = 10, Y = 9, W = 134, H = 44, Text = "Shisha" },

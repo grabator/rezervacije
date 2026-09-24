@@ -23,19 +23,8 @@ public class VenueEvent
     public int FloorWidth { get; set; }
     public int FloorHeight { get; set; }
 
-    public List<TablePackage> Packages { get; set; } = [];
     public List<FloorElementEntity> Elements { get; set; } = [];
     public List<FloorTableEntity> Tables { get; set; } = [];
-}
-
-public class TablePackage
-{
-    public string Id { get; set; } = "";
-    public string EventId { get; set; } = "";
-    public string Name { get; set; } = "";
-    public int Persons { get; set; }
-    public decimal Price { get; set; }
-    public string Description { get; set; } = "";
 }
 
 /// <summary>Statični dijelovi sale: šank, TV, sofa, ulaz, natpis.</summary>
@@ -72,8 +61,6 @@ public class Reservation
     public VenueEvent? Event { get; set; }
     public int TableEntityId { get; set; }
     public FloorTableEntity? Table { get; set; }
-    public string? PackageId { get; set; }
-    public TablePackage? Package { get; set; }
     public string FullName { get; set; } = "";
     public string Phone { get; set; } = "";
     public string Email { get; set; } = "";

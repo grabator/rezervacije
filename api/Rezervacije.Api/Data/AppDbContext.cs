@@ -7,7 +7,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<Venue> Venues => Set<Venue>();
     public DbSet<VenueEvent> Events => Set<VenueEvent>();
-    public DbSet<TablePackage> Packages => Set<TablePackage>();
     public DbSet<FloorElementEntity> FloorElements => Set<FloorElementEntity>();
     public DbSet<FloorTableEntity> Tables => Set<FloorTableEntity>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
@@ -20,11 +19,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(e => e.Venue)
             .WithMany(v => v.Events)
             .HasForeignKey(e => e.VenueId);
-
-        modelBuilder.Entity<TablePackage>()
-            .HasOne<VenueEvent>()
-            .WithMany(e => e.Packages)
-            .HasForeignKey(p => p.EventId);
 
         modelBuilder.Entity<FloorElementEntity>()
             .HasOne<VenueEvent>()
@@ -46,9 +40,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(r => r.Table)
             .WithMany()
             .HasForeignKey(r => r.TableEntityId);
-        modelBuilder.Entity<Reservation>()
-            .HasOne(r => r.Package)
-            .WithMany()
-            .HasForeignKey(r => r.PackageId);
     }
 }

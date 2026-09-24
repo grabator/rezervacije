@@ -34,9 +34,6 @@ public class AdminEventsTests : IClassFixture<TestApiFactory>
         var tables = body.GetProperty("floorPlan").GetProperty("tables").EnumerateArray().ToList();
         Assert.NotEmpty(tables);
         Assert.All(tables, t => Assert.Equal("free", t.GetProperty("status").GetString()));
-
-        var packages = body.GetProperty("packages").EnumerateArray().ToList();
-        Assert.NotEmpty(packages);
     }
 
     [Fact]

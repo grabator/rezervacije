@@ -35,14 +35,6 @@ export interface FloorPlan {
   tables: FloorTable[];
 }
 
-export interface TablePackage {
-  id: string;
-  name: string;
-  persons: number;
-  price: number;
-  description: string;
-}
-
 export interface VenueEvent {
   id: string;
   venueSlug: string;
@@ -50,7 +42,6 @@ export interface VenueEvent {
   subtitle: string;
   startsAt: string;     // ISO datum
   imageUrl?: string;
-  packages: TablePackage[];
   floorPlan: FloorPlan;
 }
 

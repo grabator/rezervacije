@@ -176,17 +176,6 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
     {
         return Results.Conflict(new { message = "Ovaj stol je u međuvremenu zauzet. Izaberi drugi." });
     }
-    string? packageId = null;
-    if (!string.IsNullOrWhiteSpace(req.PackageId))
-    {
-        var package = await db.Packages.FirstOrDefaultAsync(p => p.Id == req.PackageId && p.EventId == req.EventId);
-        if (package is null)
-        {
-            return Results.BadRequest(new { message = "Nepoznat paket." });
-        }
-        packageId = package.Id;
-    }
-
     table.Status = "pending";
 
     var reservation = new Reservation
@@ -194,7 +183,6 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
         Id = Guid.NewGuid(),
         EventId = req.EventId,
         TableEntityId = table.Id,
-        PackageId = packageId,
         FullName = req.FullName,
         Phone = req.Phone,
         Email = req.Email,
@@ -264,7 +252,6 @@ admin.MapGet("/reservations", async (AppDbContext db) =>
             r.EventId,
             EventTitle = db.Events.Where(e => e.Id == r.EventId).Select(e => e.Title).FirstOrDefault(),
             TableLabel = db.Tables.Where(t => t.Id == r.TableEntityId).Select(t => t.Label).FirstOrDefault(),
-            PackageName = db.Packages.Where(p => p.Id == r.PackageId).Select(p => p.Name).FirstOrDefault(),
             r.FullName,
             r.Phone,
             r.Email,
@@ -275,7 +262,7 @@ admin.MapGet("/reservations", async (AppDbContext db) =>
         .ToListAsync();
 
     var dtos = list.Select(r => new AdminReservationDto(
-        r.Id.ToString(), r.EventId, r.EventTitle ?? "", r.TableLabel ?? "", r.PackageName ?? "",
+        r.Id.ToString(), r.EventId, r.EventTitle ?? "", r.TableLabel ?? "",
         r.FullName, r.Phone, r.Email, r.Note, r.Status, r.CreatedAt));
     return Results.Ok(dtos);
 });
@@ -369,14 +356,6 @@ admin.MapPost("/events", async (CreateEventDto req, AppDbContext db) =>
     foreach (var t in templateTables)
         db.Tables.Add(new FloorTableEntity { EventId = id, TableKey = t.TableKey, Label = t.Label, X = t.X, Y = t.Y, Size = t.Size, Seats = t.Seats, Shape = t.Shape, Status = "free" });
 
-    var templatePackages = await db.Packages.Where(p => p.EventId == template.Id).ToListAsync();
-    var n = 0;
-    foreach (var p in templatePackages)
-    {
-        n++;
-        db.Packages.Add(new TablePackage { Id = $"{id}-pkg{n}", EventId = id, Name = p.Name, Persons = p.Persons, Price = p.Price, Description = p.Description });
-    }
-
     await db.SaveChangesAsync();
     logger.LogInformation("Admin kreirao novi event {EventId} ({Title})", id, ev.Title);
 
@@ -413,7 +392,6 @@ admin.MapDelete("/events/{id}", async (string id, AppDbContext db) =>
     if (hasReservations)
         return Results.Conflict(new { message = "Event ima rezervacije i ne može se obrisati." });
 
-    db.Packages.RemoveRange(db.Packages.Where(p => p.EventId == id));
     db.FloorElements.RemoveRange(db.FloorElements.Where(e => e.EventId == id));
     db.Tables.RemoveRange(db.Tables.Where(t => t.EventId == id));
     db.Events.Remove(ev);
@@ -427,9 +405,6 @@ app.Run();
 static async Task<VenueEventDto> ToEventDto(string eventId, AppDbContext db, string venueSlug)
 {
     var e = await db.Events.FirstAsync(x => x.Id == eventId);
-    var packages = await db.Packages.Where(p => p.EventId == eventId)
-        .Select(p => new TablePackageDto(p.Id, p.Name, p.Persons, p.Price, p.Description))
-        .ToListAsync();
     var elements = await db.FloorElements.Where(el => el.EventId == eventId)
         .Select(el => new FloorElementDto(el.Kind, el.X, el.Y, el.W, el.H, el.Text))
         .ToListAsync();
@@ -439,7 +414,7 @@ static async Task<VenueEventDto> ToEventDto(string eventId, AppDbContext db, str
 
     return new VenueEventDto(
         e.Id, venueSlug, e.Title, e.Subtitle, e.StartsAt, e.ImageUrl,
-        packages, new FloorPlanDto(e.FloorWidth, e.FloorHeight, elements, tables));
+        new FloorPlanDto(e.FloorWidth, e.FloorHeight, elements, tables));
 }
 
 static async Task<string> GenerateUniqueEventId(string title, AppDbContext db)
