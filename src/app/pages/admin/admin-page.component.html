@@ -47,27 +47,23 @@
       </button>
     </nav>
 
-    @if (availableEvents().length > 1 || availableTables().length > 1) {
-      <div class="filter-row">
-        @if (availableEvents().length > 1) {
-          <label class="select-field">
-            <span>Event</span>
-            <select [ngModel]="eventFilter()" (ngModelChange)="onEventFilterChange($event)">
-              <option value="all">Svi eventi</option>
-              @for (e of availableEvents(); track e.id) { <option [value]="e.id">{{ e.title }}</option> }
-            </select>
-          </label>
+    @if (availableEvents().length > 1) {
+      <nav class="event-pills" role="tablist" aria-label="Filtriraj po eventu">
+        <button role="tab" [class.active]="eventFilter() === 'all'" (click)="onEventFilterChange('all')">Svi eventi</button>
+        @for (e of availableEvents(); track e.id) {
+          <button role="tab" [class.active]="eventFilter() === e.id" (click)="onEventFilterChange(e.id)">{{ e.title }}</button>
         }
-        @if (availableTables().length > 1) {
-          <label class="select-field">
-            <span>Stol</span>
-            <select [ngModel]="tableFilter()" (ngModelChange)="tableFilter.set($event)">
-              <option value="all">Svi stolovi</option>
-              @for (t of availableTables(); track t) { <option [value]="t">{{ t }}</option> }
-            </select>
-          </label>
-        }
-      </div>
+      </nav>
+    }
+
+    @if (availableTables().length > 1) {
+      <label class="select-field">
+        <span>Stol</span>
+        <select [ngModel]="tableFilter()" (ngModelChange)="tableFilter.set($event)">
+          <option value="all">Svi stolovi</option>
+          @for (t of availableTables(); track t) { <option [value]="t">{{ t }}</option> }
+        </select>
+      </label>
     }
 
     @if (filtered().length === 0) {
@@ -82,17 +78,20 @@
         @for (r of filtered(); track r.id) {
           <article class="card" [attr.data-status]="r.status">
             <div class="card-top">
-              <span class="table-badge">{{ r.tableLabel }}</span>
+              <span class="event-label">{{ r.eventTitle }}</span>
               <span class="status">
                 {{ r.status === 'pending' ? 'Na čekanju' : r.status === 'confirmed' ? 'Potvrđeno' : 'Odbijeno' }}
               </span>
             </div>
-            <h2>{{ r.fullName }}</h2>
+            <div class="card-main">
+              <span class="table-badge">{{ r.tableLabel }}</span>
+              <h2>{{ r.fullName }}</h2>
+            </div>
             <div class="meta">
               <a [href]="'tel:' + r.phone">{{ r.phone }}</a>
               <a [href]="'mailto:' + r.email">{{ r.email }}</a>
             </div>
-            <p class="pkg">{{ r.packageName ? r.packageName + ' · ' : '' }}{{ r.eventTitle }}</p>
+            @if (r.packageName) { <p class="pkg">{{ r.packageName }}</p> }
             @if (r.note) { <p class="note">„{{ r.note }}"</p> }
             <p class="when">{{ r.createdAt | date: 'd.M.yyyy. HH:mm' }}</p>
 

@@ -77,8 +77,15 @@ h1 { font-family: 'Playfair Display', Georgia, serif; }
 .tabs button.active { color: var(--gold); border-color: var(--gold); }
 .tabs button:hover:not(.active) { color: var(--ivory); }
 
-.filter-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-.select-field { display: flex; flex-direction: column; gap: 5px; }
+.event-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.event-pills button {
+  font: 600 12px var(--font); padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line);
+  background: none; color: var(--ivory-soft); cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+}
+.event-pills button:hover:not(.active) { border-color: var(--ivory-soft); color: var(--ivory); }
+.event-pills button.active { border-color: var(--gold); background: var(--gold); color: var(--noir-deep); }
+
+.select-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 20px; }
 .select-field span { font: 600 10.5px var(--font); letter-spacing: .08em; text-transform: uppercase; color: var(--ivory-soft); }
 .select-field select {
   font: 500 13px var(--font); padding: 8px 30px 8px 10px; border-radius: 8px; border: 1px solid var(--line);
@@ -100,17 +107,19 @@ h1 { font-family: 'Playfair Display', Georgia, serif; }
 .card[data-status='confirmed'] { border-left-color: var(--confirmed); }
 .card[data-status='rejected'] { border-left-color: var(--rejected); opacity: .72; }
 
-.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.table-badge {
-  display: inline-flex; align-items: center; padding: 3px 12px; border-radius: 999px;
-  border: 1px solid var(--gold); color: var(--gold); font: 700 12px var(--font); letter-spacing: .04em;
-}
-.status { font: 700 10.5px var(--font); text-transform: uppercase; letter-spacing: .09em; }
+.card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.event-label { font: 600 11px var(--font); letter-spacing: .06em; color: var(--ivory-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status { flex: none; font: 700 10.5px var(--font); text-transform: uppercase; letter-spacing: .09em; }
 .card[data-status='pending'] .status { color: var(--pending); }
 .card[data-status='confirmed'] .status { color: var(--confirmed); }
 .card[data-status='rejected'] .status { color: var(--rejected); }
 
-.card h2 { margin: 0 0 6px; font-family: 'Playfair Display', Georgia, serif; font-size: 19px; font-weight: 600; color: var(--ivory); }
+.card-main { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.table-badge {
+  display: inline-flex; align-items: center; flex: none; padding: 3px 12px; border-radius: 999px;
+  border: 1px solid var(--gold); color: var(--gold); font: 700 12px var(--font); letter-spacing: .04em;
+}
+.card h2 { margin: 0; font-family: 'Playfair Display', Georgia, serif; font-size: 19px; font-weight: 600; color: var(--ivory); }
 .meta { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 8px; }
 .meta a { color: var(--ivory-soft); font-size: 13px; text-decoration: none; border-bottom: 1px solid transparent; }
 .meta a:hover { color: var(--gold); border-color: var(--gold); }
