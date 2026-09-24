@@ -9,7 +9,7 @@
 
 @if (event(); as ev) {
   <main class="page">
-    <section class="hero">
+    <section class="hero" [class.has-image]="!!ev.imageUrl" [style.--hero-image]="ev.imageUrl ? 'url(' + ev.imageUrl + ')' : null">
       <div class="date">
         <span>{{ ev.startsAt | date: 'MMM' }}</span>
         <b>{{ ev.startsAt | date: 'd' }}</b>

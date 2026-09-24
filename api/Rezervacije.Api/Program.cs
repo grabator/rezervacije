@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddResponseCompression();
+builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("Default") ?? "Data Source=rezervacije.db"));
@@ -56,8 +57,30 @@ if (builder.Environment.IsProduction() && string.IsNullOrWhiteSpace(adminPasswor
 }
 adminPassword ??= "promijeni-me";
 
+// Telegram notifikacija adminu o novoj rezervaciji. Opciono - ako nisu podeseni,
+// notifikacija se samo tiho preskace (npr. lokalni dev bez Telegram bota).
+var telegramBotToken = builder.Configuration["Telegram:BotToken"];
+var telegramChatId = builder.Configuration["Telegram:ChatId"];
+
 var app = builder.Build();
 var logger = app.Logger;
+
+async Task NotifyAdminViaTelegram(string text, IHttpClientFactory httpFactory)
+{
+    if (string.IsNullOrWhiteSpace(telegramBotToken) || string.IsNullOrWhiteSpace(telegramChatId)) return;
+    try
+    {
+        var client = httpFactory.CreateClient();
+        var url = $"https://api.telegram.org/bot{telegramBotToken}/sendMessage";
+        // Bez parse_mode - ime/napomena su slobodan gostov unos i mogli bi sadrzavati
+        // karaktere koji bi pokvarili Telegram-ov HTML/Markdown parsing.
+        await client.PostAsJsonAsync(url, new { chat_id = telegramChatId, text });
+    }
+    catch (Exception ex)
+    {
+        logger.LogWarning(ex, "Slanje Telegram notifikacije adminu nije uspjelo.");
+    }
+}
 
 if (!app.Environment.IsDevelopment())
 {
@@ -127,7 +150,7 @@ app.MapGet("/api/reservations/{id}/status", async (Guid id, AppDbContext db) =>
     return Results.Ok(new ReservationStatusDto(r.Id.ToString(), r.Status, eventTitle ?? "", tableLabel ?? "", r.CreatedAt));
 });
 
-app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext db) =>
+app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext db, IHttpClientFactory httpFactory) =>
 {
     if (!string.IsNullOrWhiteSpace(req.Hp))
     {
@@ -184,6 +207,11 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
     await tx.CommitAsync();
 
     logger.LogInformation("Nova rezervacija {Id}: stol {TableId} za event {EventId}", reservation.Id, req.TableId, req.EventId);
+
+    var eventTitle = await db.Events.Where(e => e.Id == req.EventId).Select(e => e.Title).FirstOrDefaultAsync();
+    var notifyText = $"🔔 Nova rezervacija\n📅 {eventTitle}\n🪑 Sto {req.TableId}\n👤 {req.FullName}\n📞 {req.Phone}"
+        + (string.IsNullOrWhiteSpace(req.Note) ? "" : $"\n💬 {req.Note}");
+    await NotifyAdminViaTelegram(notifyText, httpFactory);
 
     return Results.Ok(new ReservationResultDto(reservation.Id.ToString(), "pending"));
 }).RequireRateLimiting("reservations");
@@ -326,6 +354,7 @@ admin.MapPost("/events", async (CreateEventDto req, AppDbContext db) =>
         Title = req.Title.Trim(),
         Subtitle = req.Subtitle?.Trim() ?? "",
         StartsAt = req.StartsAt,
+        ImageUrl = string.IsNullOrWhiteSpace(req.ImageUrl) ? null : req.ImageUrl.Trim(),
         FloorWidth = template.FloorWidth,
         FloorHeight = template.FloorHeight,
     };
@@ -352,6 +381,27 @@ admin.MapPost("/events", async (CreateEventDto req, AppDbContext db) =>
     logger.LogInformation("Admin kreirao novi event {EventId} ({Title})", id, ev.Title);
 
     return Results.Ok(await ToEventDto(id, db, venue.Slug));
+});
+
+admin.MapPut("/events/{id}", async (string id, UpdateEventDto req, AppDbContext db) =>
+{
+    var ev = await db.Events.FindAsync(id);
+    if (ev is null) return Results.NotFound();
+
+    if (string.IsNullOrWhiteSpace(req.Title) || req.Title.Trim().Length < 3)
+        return Results.BadRequest(new { message = "Upiši naziv eventa (min 3 slova)." });
+    if (req.StartsAt == default)
+        return Results.BadRequest(new { message = "Izaberi datum i vrijeme eventa." });
+
+    ev.Title = req.Title.Trim();
+    ev.Subtitle = req.Subtitle?.Trim() ?? "";
+    ev.StartsAt = req.StartsAt;
+    ev.ImageUrl = string.IsNullOrWhiteSpace(req.ImageUrl) ? null : req.ImageUrl.Trim();
+    await db.SaveChangesAsync();
+    logger.LogInformation("Admin izmijenio event {EventId}", id);
+
+    var venue = await db.Venues.FindAsync(ev.VenueId);
+    return Results.Ok(await ToEventDto(id, db, venue!.Slug));
 });
 
 admin.MapDelete("/events/{id}", async (string id, AppDbContext db) =>

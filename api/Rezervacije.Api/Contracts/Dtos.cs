@@ -41,4 +41,6 @@ public record AdminReservationDto(
     DateTime CreatedAt
 );
 
-public record CreateEventDto(string VenueSlug, string Title, string? Subtitle, DateTime StartsAt);
+public record CreateEventDto(string VenueSlug, string Title, string? Subtitle, DateTime StartsAt, string? ImageUrl = null);
+
+public record UpdateEventDto(string Title, string? Subtitle, DateTime StartsAt, string? ImageUrl);

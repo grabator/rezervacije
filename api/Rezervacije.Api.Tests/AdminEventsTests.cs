@@ -85,4 +85,45 @@ public class AdminEventsTests : IClassFixture<TestApiFactory>
 
         Assert.Equal(HttpStatusCode.Conflict, res.StatusCode);
     }
+
+    [Fact]
+    public async Task UpdatingEvent_ChangesTitleDateAndImage_WithoutTouchingTables()
+    {
+        var create = await _client.PostAsJsonAsync("/api/admin/events", new
+        {
+            venueSlug = "exclusive",
+            title = "Za Izmjenu",
+            startsAt = DateTime.Now.AddDays(12),
+        });
+        var createdBody = await create.Content.ReadFromJsonAsync<JsonElement>();
+        var id = createdBody.GetProperty("id").GetString()!;
+        var newDate = DateTime.Now.AddDays(20);
+
+        var res = await _client.PutAsJsonAsync($"/api/admin/events/{id}", new
+        {
+            title = "Ispravljen Naziv",
+            subtitle = "Novi podnaslov",
+            startsAt = newDate,
+            imageUrl = "https://example.com/slika.jpg",
+        });
+
+        res.EnsureSuccessStatusCode();
+        var body = await res.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Ispravljen Naziv", body.GetProperty("title").GetString());
+        Assert.Equal("Novi podnaslov", body.GetProperty("subtitle").GetString());
+        Assert.Equal("https://example.com/slika.jpg", body.GetProperty("imageUrl").GetString());
+        Assert.Equal(27, body.GetProperty("floorPlan").GetProperty("tables").GetArrayLength());
+    }
+
+    [Fact]
+    public async Task UpdatingUnknownEvent_Returns404()
+    {
+        var res = await _client.PutAsJsonAsync("/api/admin/events/ne-postoji", new
+        {
+            title = "Nešto",
+            startsAt = DateTime.Now.AddDays(1),
+        });
+
+        Assert.Equal(HttpStatusCode.NotFound, res.StatusCode);
+    }
 }

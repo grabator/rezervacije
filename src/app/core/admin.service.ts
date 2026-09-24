@@ -22,6 +22,7 @@ export interface AdminEvent {
   title: string;
   subtitle: string;
   startsAt: string;
+  imageUrl?: string;
 }
 
 export interface CreateEventRequest {
@@ -29,6 +30,14 @@ export interface CreateEventRequest {
   title: string;
   subtitle?: string;
   startsAt: string;
+  imageUrl?: string;
+}
+
+export interface UpdateEventRequest {
+  title: string;
+  subtitle?: string;
+  startsAt: string;
+  imageUrl?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -61,6 +70,10 @@ export class AdminService {
 
   createEvent(password: string, req: CreateEventRequest): Observable<AdminEvent> {
     return this.http.post<AdminEvent>(`${API_BASE}/admin/events`, req, { headers: this.headers(password) });
+  }
+
+  updateEvent(password: string, id: string, req: UpdateEventRequest): Observable<AdminEvent> {
+    return this.http.put<AdminEvent>(`${API_BASE}/admin/events/${id}`, req, { headers: this.headers(password) });
   }
 
   deleteEvent(password: string, id: string): Observable<object> {

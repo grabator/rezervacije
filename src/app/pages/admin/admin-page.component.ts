@@ -41,9 +41,11 @@ export class AdminPageComponent {
   events = signal<AdminEvent[]>([]);
   showEvents = signal(false);
   showEventForm = signal(false);
+  editingEventId = signal<string | null>(null);
   eventTitle = signal('');
   eventSubtitle = signal('');
   eventDate = signal('');
+  eventImageUrl = signal('');
   creatingEvent = signal(false);
   eventError = signal<string | null>(null);
 
@@ -168,33 +170,68 @@ export class AdminPageComponent {
     this.api.listEvents(this.password()).subscribe(list => this.events.set(list));
   }
 
-  createEvent() {
+  toggleEventForm() {
+    if (this.showEventForm()) this.closeEventForm();
+    else this.startNewEvent();
+  }
+
+  startNewEvent() {
+    this.editingEventId.set(null);
+    this.eventTitle.set('');
+    this.eventSubtitle.set('');
+    this.eventDate.set('');
+    this.eventImageUrl.set('');
+    this.eventError.set(null);
+    this.showEventForm.set(true);
+  }
+
+  startEditEvent(ev: AdminEvent) {
+    this.editingEventId.set(ev.id);
+    this.eventTitle.set(ev.title);
+    this.eventSubtitle.set(ev.subtitle);
+    this.eventDate.set(ev.startsAt.slice(0, 16));
+    this.eventImageUrl.set(ev.imageUrl ?? '');
+    this.eventError.set(null);
+    this.showEventForm.set(true);
+  }
+
+  closeEventForm() {
+    this.showEventForm.set(false);
+    this.editingEventId.set(null);
+  }
+
+  saveEvent() {
     const title = this.eventTitle().trim();
     if (!title || title.length < 3) { this.eventError.set('Upiši naziv eventa (min 3 slova).'); return; }
     if (!this.eventDate()) { this.eventError.set('Izaberi datum i vrijeme.'); return; }
 
     this.creatingEvent.set(true);
     this.eventError.set(null);
-    this.api.createEvent(this.password(), {
-      venueSlug: this.venueSlug,
+
+    const payload = {
       title,
       subtitle: this.eventSubtitle().trim() || undefined,
       // Salje se "kao sto pise" (npr. "2026-10-15T20:00", bez UTC konverzije) jer cijela
       // aplikacija tretira datume kao goli lokalni datum/vrijeme (vidi SeedData.cs) -
       // .toISOString() bi ovdje pomjerio sat za razliku u odnosu na UTC.
       startsAt: this.eventDate(),
-    }).subscribe({
+      imageUrl: this.eventImageUrl().trim() || undefined,
+    };
+
+    const editingId = this.editingEventId();
+    const req$ = editingId
+      ? this.api.updateEvent(this.password(), editingId, payload)
+      : this.api.createEvent(this.password(), { venueSlug: this.venueSlug, ...payload });
+
+    req$.subscribe({
       next: () => {
         this.creatingEvent.set(false);
-        this.eventTitle.set('');
-        this.eventSubtitle.set('');
-        this.eventDate.set('');
-        this.showEventForm.set(false);
+        this.closeEventForm();
         this.loadEvents();
       },
       error: (e) => {
         this.creatingEvent.set(false);
-        this.eventError.set(e.error?.message ?? 'Greška pri dodavanju eventa.');
+        this.eventError.set(e.error?.message ?? 'Greška pri čuvanju eventa.');
       },
     });
   }

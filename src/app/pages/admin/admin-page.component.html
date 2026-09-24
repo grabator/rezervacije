@@ -37,13 +37,13 @@
       <section class="events-panel">
         <div class="events-head">
           <h2>Eventi</h2>
-          <button class="text-btn" (click)="showEventForm.set(!showEventForm())">
+          <button class="text-btn" (click)="toggleEventForm()">
             {{ showEventForm() ? 'Zatvori' : '+ Novi event' }}
           </button>
         </div>
 
         @if (showEventForm()) {
-          <form class="event-form" (ngSubmit)="createEvent()">
+          <form class="event-form" (ngSubmit)="saveEvent()">
             <label class="field">
               <span>Naziv</span>
               <input [ngModel]="eventTitle()" (ngModelChange)="eventTitle.set($event)" name="eventTitle" placeholder="npr. Njemačka vs Španija" />
@@ -56,8 +56,14 @@
               <span>Datum i vrijeme</span>
               <input type="datetime-local" [ngModel]="eventDate()" (ngModelChange)="eventDate.set($event)" name="eventDate" />
             </label>
+            <label class="field">
+              <span>URL slike <i>(opciono)</i></span>
+              <input [ngModel]="eventImageUrl()" (ngModelChange)="eventImageUrl.set($event)" name="eventImageUrl" placeholder="https://…" />
+            </label>
             @if (eventError()) { <p class="err">{{ eventError() }}</p> }
-            <button class="cta" type="submit" [disabled]="creatingEvent()">{{ creatingEvent() ? 'Dodajem…' : 'Dodaj event' }}</button>
+            <button class="cta" type="submit" [disabled]="creatingEvent()">
+              {{ creatingEvent() ? 'Čuvam…' : (editingEventId() ? 'Sačuvaj izmjene' : 'Dodaj event') }}
+            </button>
           </form>
         }
 
@@ -68,7 +74,10 @@
                 <b>{{ ev.title }}</b>
                 <span>{{ ev.startsAt | date: 'd.M.yyyy. HH:mm' }}</span>
               </div>
-              <button class="icon-btn danger" (click)="deleteEvent(ev)" title="Obriši event" aria-label="Obriši event">✕</button>
+              <div class="events-list-actions">
+                <button class="icon-btn" (click)="startEditEvent(ev)" title="Izmijeni event" aria-label="Izmijeni event">✎</button>
+                <button class="icon-btn danger" (click)="deleteEvent(ev)" title="Obriši event" aria-label="Obriši event">✕</button>
+              </div>
             </li>
           } @empty {
             <li class="empty-row">Nema eventova.</li>
