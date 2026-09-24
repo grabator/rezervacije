@@ -1,43 +1,47 @@
-<header class="head">
-  <img class="mark" src="logo.jpg" [alt]="venue()?.name ?? 'Logo'" />
-  <div><h1>{{ venue()?.name }}</h1><p>Izaberi event i rezerviši stol.</p></div>
-</header>
-
-<section class="hero" aria-hidden="true">
-  <svg class="hookah" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg">
+<div class="bg-hookah" aria-hidden="true">
+  <svg viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <filter id="smokeBlur" x="-60%" y="-60%" width="220%" height="220%">
-        <feGaussianBlur stdDeviation="4.5" />
+        <feGaussianBlur stdDeviation="10" />
       </filter>
-      <radialGradient id="glow" cx="50%" cy="35%" r="60%">
-        <stop offset="0%" stop-color="var(--ink-soft)" stop-opacity=".16" />
+      <radialGradient id="glow" cx="50%" cy="55%" r="55%">
+        <stop offset="0%" stop-color="var(--ink-soft)" stop-opacity=".14" />
         <stop offset="100%" stop-color="var(--ink-soft)" stop-opacity="0" />
       </radialGradient>
     </defs>
 
-    <ellipse cx="110" cy="90" rx="95" ry="95" fill="url(#glow)" />
+    <ellipse cx="200" cy="600" rx="220" ry="320" fill="url(#glow)" />
 
     <g class="smoke" filter="url(#smokeBlur)">
-      <circle class="puff puff1" cx="110" cy="38" r="13" />
-      <circle class="puff puff2" cx="106" cy="38" r="10" />
-      <circle class="puff puff3" cx="114" cy="38" r="11" />
-      <circle class="puff puff4" cx="109" cy="38" r="9" />
-      <circle class="puff puff5" cx="112" cy="38" r="12" />
+      <circle class="puff puff1" cx="200" cy="400" r="26" />
+      <circle class="puff puff2" cx="190" cy="400" r="20" />
+      <circle class="puff puff3" cx="212" cy="400" r="22" />
+      <circle class="puff puff4" cx="198" cy="400" r="18" />
+      <circle class="puff puff5" cx="206" cy="400" r="24" />
+      <circle class="puff puff6" cx="192" cy="400" r="16" />
     </g>
 
-    <g class="body" fill="none" stroke="var(--ink-soft)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
-      <path class="outline" d="M65,45 C57,58 60,68 90,76 L92,150 C70,160 55,180 55,205 C55,235 80,255 110,255
-        C140,255 165,235 165,205 C165,180 150,160 128,150 L130,76 C160,68 163,58 155,45
-        Q110,33 65,45 Z" fill="var(--surface)" />
-      <ellipse cx="110" cy="93" rx="44" ry="7" fill="var(--surface-2)" />
-      <path class="hose" d="M128,118 C168,122 194,138 189,172 C186,196 165,202 159,188" fill="none" />
-      <circle cx="159" cy="188" r="6" fill="var(--surface-2)" />
-      <circle cx="103" cy="41" r="2.4" fill="var(--ink-soft)" stroke="none" />
-      <circle cx="110" cy="39" r="2.4" fill="var(--ink-soft)" stroke="none" />
-      <circle cx="117" cy="41" r="2.4" fill="var(--ink-soft)" stroke="none" />
+    <g class="silhouette" fill="var(--ink-soft)" fill-opacity=".11" stroke="none">
+      <path d="M200,398 C178,398 165,415 168,432 C170,448 183,458 200,459
+        C217,458 230,448 232,432 C235,415 222,398 200,398 Z" />
+      <path d="M188,475 L212,475 L212,540 C212,540 300,560 300,650 C300,650 300,760 255,790
+        C230,806 215,810 200,810 C185,810 170,806 145,790 C100,760 100,650 100,650
+        C100,560 188,540 188,540 Z" />
+      <ellipse cx="200" cy="465" rx="62" ry="9" />
+    </g>
+
+    <g class="hose" fill="none" stroke="var(--ink-soft)" stroke-opacity=".15" stroke-width="10" stroke-linecap="round">
+      <path d="M212,485 C280,490 322,530 312,580 C304,618 270,632 268,660 C266,690 288,704 282,730
+        C276,754 244,758 232,742" />
+      <circle cx="230" cy="744" r="13" fill="var(--ink-soft)" fill-opacity=".15" stroke="none" />
     </g>
   </svg>
-</section>
+</div>
+
+<header class="head">
+  <img class="mark" src="logo.jpg" [alt]="venue()?.name ?? 'Logo'" />
+  <div><h1>{{ venue()?.name }}</h1><p>Izaberi event i rezerviši stol.</p></div>
+</header>
 
 <main class="list">
   @for (e of events(); track e.id) {
