@@ -28,6 +28,7 @@ export class EventPageComponent {
   submitting = signal(false);
   error = signal<string | null>(null);
   done = signal(false);
+  lastReservationId = signal<string | null>(null);
 
   form = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -35,6 +36,7 @@ export class EventPageComponent {
     email: ['', [Validators.required, Validators.email]],
     note: [''],
     terms: [false, Validators.requiredTrue],
+    hp: [''],
   });
 
   pickTable(t: FloorTable) {
@@ -57,8 +59,14 @@ export class EventPageComponent {
     this.api.reserve({
       eventId: ev.id, tableId: this.table()!.id,
       fullName: v.fullName.trim(), phone: v.phone.trim(), email: v.email.trim(), note: v.note.trim() || undefined,
+      hp: v.hp || undefined,
     }).subscribe({
-      next: () => { this.submitting.set(false); this.done.set(true); window.scrollTo({ top: 0, behavior: 'smooth' }); },
+      next: (res) => {
+        this.submitting.set(false);
+        this.lastReservationId.set(res.reservationId);
+        this.done.set(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
       error: (e: Error) => { this.submitting.set(false); this.table.set(null); this.error.set(e.message); },
     });
   }

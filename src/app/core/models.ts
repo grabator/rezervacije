@@ -61,9 +61,18 @@ export interface ReservationRequest {
   phone: string;
   email: string;
   note?: string;
+  hp?: string;
 }
 
 export interface ReservationResult {
   reservationId: string;
   status: 'pending';
+}
+
+export interface ReservationStatus {
+  id: string;
+  status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
+  eventTitle: string;
+  tableLabel: string;
+  createdAt: string;
 }

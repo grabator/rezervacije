@@ -13,8 +13,22 @@ export interface AdminReservation {
   phone: string;
   email: string;
   note?: string;
-  status: 'pending' | 'confirmed' | 'rejected';
+  status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
   createdAt: string;
+}
+
+export interface AdminEvent {
+  id: string;
+  title: string;
+  subtitle: string;
+  startsAt: string;
+}
+
+export interface CreateEventRequest {
+  venueSlug: string;
+  title: string;
+  subtitle?: string;
+  startsAt: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -35,5 +49,21 @@ export class AdminService {
 
   reject(password: string, id: string): Observable<object> {
     return this.http.post(`${API_BASE}/admin/reservations/${id}/reject`, {}, { headers: this.headers(password) });
+  }
+
+  cancel(password: string, id: string): Observable<object> {
+    return this.http.post(`${API_BASE}/admin/reservations/${id}/cancel`, {}, { headers: this.headers(password) });
+  }
+
+  listEvents(password: string): Observable<AdminEvent[]> {
+    return this.http.get<AdminEvent[]>(`${API_BASE}/admin/events`, { headers: this.headers(password) });
+  }
+
+  createEvent(password: string, req: CreateEventRequest): Observable<AdminEvent> {
+    return this.http.post<AdminEvent>(`${API_BASE}/admin/events`, req, { headers: this.headers(password) });
+  }
+
+  deleteEvent(password: string, id: string): Observable<object> {
+    return this.http.delete(`${API_BASE}/admin/events/${id}`, { headers: this.headers(password) });
   }
 }

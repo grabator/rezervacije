@@ -1,0 +1,30 @@
+<main class="page">
+  @if (status() === undefined) {
+    <p class="loading">Učitavam…</p>
+  } @else if (status() === null) {
+    <section class="card">
+      <div class="icon" aria-hidden="true">?</div>
+      <h1>Rezervacija nije pronađena</h1>
+      <p>Provjeri da li je link ispravan, ili nas kontaktiraj direktno.</p>
+      <a class="back" [routerLink]="['/r', venueSlug, 'rezervacije']">Nazad na eventove</a>
+    </section>
+  } @else {
+    @if (status(); as s) {
+      <section class="card">
+        <div class="icon" [attr.data-status]="s.status" aria-hidden="true">
+          @switch (s.status) {
+            @case ('confirmed') { ✓ }
+            @case ('rejected') { ✕ }
+            @case ('cancelled') { ✕ }
+            @default { ⏳ }
+          }
+        </div>
+        <span class="badge" [attr.data-status]="s.status">{{ statusLabel(s.status) }}</span>
+        <h1>{{ s.eventTitle }}</h1>
+        <p class="table">Stol {{ s.tableLabel }}</p>
+        <p class="when">Poslano {{ s.createdAt | date: 'd.M.yyyy. HH:mm' }}</p>
+        <a class="back" [routerLink]="['/r', venueSlug, 'rezervacije']">Nazad na eventove</a>
+      </section>
+    }
+  }
+</main>

@@ -25,12 +25,57 @@
         </div>
       </div>
       <div class="actions">
+        <button class="text-btn" (click)="showEvents.set(!showEvents())">{{ showEvents() ? 'Zatvori eventi' : 'Eventi' }}</button>
         <button class="icon-btn" (click)="refresh()" [disabled]="loading()" [attr.aria-label]="'Osvježi'" title="Osvježi">
           <span [class.spin]="loading()">↻</span>
         </button>
         <button class="text-btn" (click)="logout()">Odjava</button>
       </div>
     </header>
+
+    @if (showEvents()) {
+      <section class="events-panel">
+        <div class="events-head">
+          <h2>Eventi</h2>
+          <button class="text-btn" (click)="showEventForm.set(!showEventForm())">
+            {{ showEventForm() ? 'Zatvori' : '+ Novi event' }}
+          </button>
+        </div>
+
+        @if (showEventForm()) {
+          <form class="event-form" (ngSubmit)="createEvent()">
+            <label class="field">
+              <span>Naziv</span>
+              <input [ngModel]="eventTitle()" (ngModelChange)="eventTitle.set($event)" name="eventTitle" placeholder="npr. Njemačka vs Španija" />
+            </label>
+            <label class="field">
+              <span>Podnaslov <i>(opciono)</i></span>
+              <input [ngModel]="eventSubtitle()" (ngModelChange)="eventSubtitle.set($event)" name="eventSubtitle" placeholder="Utakmica na velikim ekranima" />
+            </label>
+            <label class="field">
+              <span>Datum i vrijeme</span>
+              <input type="datetime-local" [ngModel]="eventDate()" (ngModelChange)="eventDate.set($event)" name="eventDate" />
+            </label>
+            @if (eventError()) { <p class="err">{{ eventError() }}</p> }
+            <button class="cta" type="submit" [disabled]="creatingEvent()">{{ creatingEvent() ? 'Dodajem…' : 'Dodaj event' }}</button>
+          </form>
+        }
+
+        <ul class="events-list">
+          @for (ev of events(); track ev.id) {
+            <li>
+              <div>
+                <b>{{ ev.title }}</b>
+                <span>{{ ev.startsAt | date: 'd.M.yyyy. HH:mm' }}</span>
+              </div>
+              <button class="icon-btn danger" (click)="deleteEvent(ev)" title="Obriši event" aria-label="Obriši event">✕</button>
+            </li>
+          } @empty {
+            <li class="empty-row">Nema eventova.</li>
+          }
+        </ul>
+      </section>
+    }
 
     <nav class="tabs" role="tablist">
       <button role="tab" [class.active]="filter() === 'pending'" (click)="filter.set('pending')">
@@ -41,6 +86,9 @@
       </button>
       <button role="tab" [class.active]="filter() === 'rejected'" (click)="filter.set('rejected')">
         Odbijeno <b>{{ counts().rejected }}</b>
+      </button>
+      <button role="tab" [class.active]="filter() === 'cancelled'" (click)="filter.set('cancelled')">
+        Otkazano <b>{{ counts().cancelled }}</b>
       </button>
       <button role="tab" [class.active]="filter() === 'all'" (click)="filter.set('all')">
         Sve <b>{{ counts().all }}</b>
@@ -71,6 +119,7 @@
         @if (filter() === 'pending') { Nema zahtjeva na čekanju. }
         @else if (filter() === 'confirmed') { Nema potvrđenih rezervacija. }
         @else if (filter() === 'rejected') { Nema odbijenih zahtjeva. }
+        @else if (filter() === 'cancelled') { Nema otkazanih rezervacija. }
         @else { Još nema nijednog zahtjeva za rezervaciju. }
       </p>
     } @else {
@@ -79,9 +128,7 @@
           <article class="card" [attr.data-status]="r.status">
             <div class="card-top">
               <span class="event-label">{{ r.eventTitle }}</span>
-              <span class="status">
-                {{ r.status === 'pending' ? 'Na čekanju' : r.status === 'confirmed' ? 'Potvrđeno' : 'Odbijeno' }}
-              </span>
+              <span class="status">{{ statusLabel(r.status) }}</span>
             </div>
             <div class="card-main">
               <span class="table-badge">{{ r.tableLabel }}</span>
@@ -99,6 +146,11 @@
               <div class="row-actions">
                 <button class="btn reject" (click)="reject(r)" [disabled]="actingOn() === r.id">Odbij</button>
                 <button class="btn confirm" (click)="confirm(r)" [disabled]="actingOn() === r.id">Potvrdi</button>
+              </div>
+            }
+            @if (r.status === 'confirmed') {
+              <div class="row-actions">
+                <button class="btn reject" (click)="cancel(r)" [disabled]="actingOn() === r.id">Otkaži rezervaciju</button>
               </div>
             }
           </article>

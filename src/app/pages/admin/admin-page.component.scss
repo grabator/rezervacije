@@ -14,6 +14,7 @@
   --pending: #A08B5E;
   --confirmed: #7A9A82;
   --rejected: #A8635A;
+  --cancelled: #8A8A86;
 
   background: var(--noir);
   color: var(--ivory);
@@ -63,9 +64,32 @@ h1 { font-family: 'Playfair Display', Georgia, serif; }
 .icon-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
 .icon-btn:disabled { opacity: .5; cursor: default; }
 .icon-btn span.spin { display: inline-block; animation: spin 1s linear infinite; }
+.icon-btn.danger { width: 30px; height: 30px; font-size: 13px; }
+.icon-btn.danger:hover:not(:disabled) { border-color: var(--rejected); color: var(--rejected); }
 @keyframes spin { to { transform: rotate(360deg); } }
 .text-btn { background: none; border: 0; color: var(--ivory-soft); font: 500 13px var(--font); cursor: pointer; padding: 8px 4px; }
 .text-btn:hover { color: var(--ivory); }
+
+.events-panel {
+  margin-bottom: 22px; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+}
+.events-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.events-head h2 { margin: 0; font-size: 15px; font-weight: 600; color: var(--ivory); }
+
+.event-form { display: flex; flex-direction: column; gap: 0; padding: 14px 0 4px; border-top: 1px solid var(--line); margin-top: 10px; }
+.event-form .field { margin-bottom: 14px; }
+.event-form .field input { color-scheme: dark; }
+
+.events-list { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.events-list li {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 2px; border-top: 1px solid var(--line);
+}
+.events-list li:first-child { border-top: 0; }
+.events-list li > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.events-list b { font-size: 13.5px; color: var(--ivory); font-weight: 600; }
+.events-list span { font-size: 12px; color: var(--ivory-soft); font-variant-numeric: tabular-nums; }
+.events-list .empty-row { color: var(--ivory-soft); font-size: 13px; padding: 10px 2px; }
 
 .tabs { display: flex; gap: 22px; margin-bottom: 22px; overflow-x: auto; }
 .tabs button {
@@ -106,6 +130,7 @@ h1 { font-family: 'Playfair Display', Georgia, serif; }
 .card[data-status='pending'] { border-left-color: var(--pending); }
 .card[data-status='confirmed'] { border-left-color: var(--confirmed); }
 .card[data-status='rejected'] { border-left-color: var(--rejected); opacity: .72; }
+.card[data-status='cancelled'] { border-left-color: var(--cancelled); opacity: .72; }
 
 .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
 .event-label { font: 600 11px var(--font); letter-spacing: .06em; color: var(--ivory-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -113,6 +138,7 @@ h1 { font-family: 'Playfair Display', Georgia, serif; }
 .card[data-status='pending'] .status { color: var(--pending); }
 .card[data-status='confirmed'] .status { color: var(--confirmed); }
 .card[data-status='rejected'] .status { color: var(--rejected); }
+.card[data-status='cancelled'] .status { color: var(--cancelled); }
 
 .card-main { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .table-badge {

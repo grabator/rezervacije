@@ -18,6 +18,9 @@ public class TestApiFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Development"); // izbjegava fail-fast provjeru za AdminPassword
         builder.UseSetting("ConnectionStrings:Default", $"Data Source={_dbPath}");
         builder.UseSetting("AdminPassword", AdminPassword);
+        // Testovi salju vise rezervacija u sekundi nego sto bi ijedan pravi gost ikad poslao -
+        // podigni rate-limit da testovi ne padaju na 429 umjesto na ocekivani status.
+        builder.UseSetting("RateLimiting:ReservationPermitLimit", "1000");
     }
 
     protected override void Dispose(bool disposing)

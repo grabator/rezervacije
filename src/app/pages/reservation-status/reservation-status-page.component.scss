@@ -1,0 +1,27 @@
+:host { display: block; min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+
+.loading { color: var(--ink-soft); }
+
+.card { max-width: 380px; width: 100%; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 36px 26px; }
+
+.icon {
+  width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 24px; background: var(--surface-2); color: var(--ink-soft);
+}
+.icon[data-status='confirmed'] { background: var(--free); color: var(--ink-on-accent); }
+.icon[data-status='pending'] { background: var(--pending); color: var(--ink-on-accent); }
+.icon[data-status='rejected'], .icon[data-status='cancelled'] { background: var(--taken); color: var(--ink-on-accent); }
+
+.badge {
+  display: inline-block; margin-bottom: 10px; padding: 4px 12px; border-radius: 999px;
+  font: 700 11px var(--font); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); border: 1px solid var(--line);
+}
+.badge[data-status='confirmed'] { color: var(--free); border-color: var(--free); }
+.badge[data-status='pending'] { color: var(--pending); border-color: var(--pending); }
+.badge[data-status='rejected'], .badge[data-status='cancelled'] { color: var(--taken); border-color: var(--taken); }
+
+h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.01em; }
+.table { margin: 0; color: var(--ink-soft); font-size: 15px; }
+.when { margin: 4px 0 20px; color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+
+.back { display: inline-block; color: var(--velvet); font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }

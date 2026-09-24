@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Xunit;
@@ -60,5 +61,28 @@ public class ConfirmRejectTests : IClassFixture<TestApiFactory>
 
         res.EnsureSuccessStatusCode();
         Assert.Equal("free", await TableStatus("S10"));
+    }
+
+    [Fact]
+    public async Task Cancelling_ConfirmedReservation_FreesTheTableAgain()
+    {
+        var id = await ReserveTable("S11");
+        (await _client.PostAsync($"/api/admin/reservations/{id}/confirm", null)).EnsureSuccessStatusCode();
+        Assert.Equal("taken", await TableStatus("S11"));
+
+        var res = await _client.PostAsync($"/api/admin/reservations/{id}/cancel", null);
+
+        res.EnsureSuccessStatusCode();
+        Assert.Equal("free", await TableStatus("S11"));
+    }
+
+    [Fact]
+    public async Task Cancelling_PendingReservation_ReturnsBadRequest()
+    {
+        var id = await ReserveTable("S12");
+
+        var res = await _client.PostAsync($"/api/admin/reservations/{id}/cancel", null);
+
+        Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
     }
 }

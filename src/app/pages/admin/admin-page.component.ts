@@ -1,11 +1,19 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AdminReservation, AdminService } from '../../core/admin.service';
+import { AdminEvent, AdminReservation, AdminService } from '../../core/admin.service';
 
 const STORAGE_KEY = 'rezervacije-admin-pw';
 
-type StatusFilter = 'pending' | 'confirmed' | 'rejected' | 'all';
+type StatusFilter = 'pending' | 'confirmed' | 'rejected' | 'cancelled' | 'all';
+
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'Na čekanju',
+  confirmed: 'Potvrđeno',
+  rejected: 'Odbijeno',
+  cancelled: 'Otkazano',
+};
 
 @Component({
   selector: 'app-admin-page',
@@ -16,6 +24,9 @@ type StatusFilter = 'pending' | 'confirmed' | 'rejected' | 'all';
 })
 export class AdminPageComponent {
   private api = inject(AdminService);
+  private route = inject(ActivatedRoute);
+
+  venueSlug = this.route.snapshot.paramMap.get('venue')!;
 
   password = signal(sessionStorage.getItem(STORAGE_KEY) ?? '');
   authed = signal(false);
@@ -27,6 +38,15 @@ export class AdminPageComponent {
   eventFilter = signal<string>('all');
   tableFilter = signal<string>('all');
 
+  events = signal<AdminEvent[]>([]);
+  showEvents = signal(false);
+  showEventForm = signal(false);
+  eventTitle = signal('');
+  eventSubtitle = signal('');
+  eventDate = signal('');
+  creatingEvent = signal(false);
+  eventError = signal<string | null>(null);
+
   passwordInput = '';
 
   counts = computed(() => {
@@ -36,8 +56,13 @@ export class AdminPageComponent {
       pending: list.filter(r => r.status === 'pending').length,
       confirmed: list.filter(r => r.status === 'confirmed').length,
       rejected: list.filter(r => r.status === 'rejected').length,
+      cancelled: list.filter(r => r.status === 'cancelled').length,
     };
   });
+
+  statusLabel(status: string): string {
+    return STATUS_LABELS[status] ?? status;
+  }
 
   availableEvents = computed(() => {
     const map = new Map<string, string>();
@@ -92,6 +117,7 @@ export class AdminPageComponent {
         this.authed.set(true);
         this.reservations.set(sortReservations(list));
         this.loading.set(false);
+        this.loadEvents();
       },
       error: () => {
         sessionStorage.removeItem(STORAGE_KEY);
@@ -126,6 +152,58 @@ export class AdminPageComponent {
     this.api.reject(this.password(), r.id).subscribe({
       next: () => this.refresh(),
       error: () => this.actingOn.set(null),
+    });
+  }
+
+  cancel(r: AdminReservation) {
+    if (!window.confirm(`Otkazati potvrđenu rezervaciju za "${r.fullName}"? Stol ${r.tableLabel} će ponovo postati slobodan.`)) return;
+    this.actingOn.set(r.id);
+    this.api.cancel(this.password(), r.id).subscribe({
+      next: () => this.refresh(),
+      error: () => this.actingOn.set(null),
+    });
+  }
+
+  loadEvents() {
+    this.api.listEvents(this.password()).subscribe(list => this.events.set(list));
+  }
+
+  createEvent() {
+    const title = this.eventTitle().trim();
+    if (!title || title.length < 3) { this.eventError.set('Upiši naziv eventa (min 3 slova).'); return; }
+    if (!this.eventDate()) { this.eventError.set('Izaberi datum i vrijeme.'); return; }
+
+    this.creatingEvent.set(true);
+    this.eventError.set(null);
+    this.api.createEvent(this.password(), {
+      venueSlug: this.venueSlug,
+      title,
+      subtitle: this.eventSubtitle().trim() || undefined,
+      // Salje se "kao sto pise" (npr. "2026-10-15T20:00", bez UTC konverzije) jer cijela
+      // aplikacija tretira datume kao goli lokalni datum/vrijeme (vidi SeedData.cs) -
+      // .toISOString() bi ovdje pomjerio sat za razliku u odnosu na UTC.
+      startsAt: this.eventDate(),
+    }).subscribe({
+      next: () => {
+        this.creatingEvent.set(false);
+        this.eventTitle.set('');
+        this.eventSubtitle.set('');
+        this.eventDate.set('');
+        this.showEventForm.set(false);
+        this.loadEvents();
+      },
+      error: (e) => {
+        this.creatingEvent.set(false);
+        this.eventError.set(e.error?.message ?? 'Greška pri dodavanju eventa.');
+      },
+    });
+  }
+
+  deleteEvent(ev: AdminEvent) {
+    if (!window.confirm(`Obrisati event "${ev.title}"? Ovo je moguće samo ako nema rezervacija.`)) return;
+    this.api.deleteEvent(this.password(), ev.id).subscribe({
+      next: () => this.loadEvents(),
+      error: (e) => window.alert(e.error?.message ?? 'Event se ne može obrisati.'),
     });
   }
 }

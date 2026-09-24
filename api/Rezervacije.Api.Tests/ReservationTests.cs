@@ -62,4 +62,48 @@ public class ReservationTests : IClassFixture<TestApiFactory>
         var res = await _client.PostAsJsonAsync("/api/reservations", ValidRequest("S5", name, email, phone));
         Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
     }
+
+    [Fact]
+    public async Task Reserving_WithHoneypotFilled_SilentlySucceedsWithoutBookingTable()
+    {
+        var req = new
+        {
+            eventId = "poljska-bih",
+            tableId = "S15",
+            fullName = "Bot Test",
+            phone = "+38761234567",
+            email = "bot@test.com",
+            hp = "im-a-bot",
+        };
+
+        var res = await _client.PostAsJsonAsync("/api/reservations", req);
+        Assert.Equal(HttpStatusCode.OK, res.StatusCode);
+
+        var ev = await _client.GetFromJsonAsync<JsonElement>("/api/events/poljska-bih");
+        var status = ev.GetProperty("floorPlan").GetProperty("tables").EnumerateArray()
+            .First(t => t.GetProperty("id").GetString() == "S15").GetProperty("status").GetString();
+        Assert.Equal("free", status);
+    }
+
+    [Fact]
+    public async Task ReservationStatus_ForExistingReservation_ReturnsStatusAndTable()
+    {
+        var createRes = await _client.PostAsJsonAsync("/api/reservations", ValidRequest("S16"));
+        var body = await createRes.Content.ReadFromJsonAsync<JsonElement>();
+        var id = body.GetProperty("reservationId").GetString();
+
+        var statusRes = await _client.GetAsync($"/api/reservations/{id}/status");
+
+        Assert.Equal(HttpStatusCode.OK, statusRes.StatusCode);
+        var statusBody = await statusRes.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("pending", statusBody.GetProperty("status").GetString());
+        Assert.Equal("S16", statusBody.GetProperty("tableLabel").GetString());
+    }
+
+    [Fact]
+    public async Task ReservationStatus_ForUnknownId_Returns404()
+    {
+        var res = await _client.GetAsync($"/api/reservations/{Guid.NewGuid()}/status");
+        Assert.Equal(HttpStatusCode.NotFound, res.StatusCode);
+    }
 }

@@ -23,6 +23,9 @@
         <div class="tick" aria-hidden="true">✓</div>
         <h2>Zahtjev je poslan</h2>
         <p>Stol <b>{{ table()?.label }}</b> je rezervisan za tebe. Rezervacija važi tek kad ti je lokal potvrdi na <b>{{ form.controls.email.value }}</b>.</p>
+        @if (lastReservationId(); as id) {
+          <a class="status-link" [routerLink]="['/r', venueSlug, 'rezervacije', 'status', id]">Provjeri status rezervacije</a>
+        }
       </section>
     } @else {
       <section class="card">
@@ -62,9 +65,18 @@
           <span>Napomena <i>(opciono)</i></span>
           <textarea formControlName="note" rows="3"></textarea>
         </label>
+
+        <label class="hp-field" aria-hidden="true">
+          <span>Ostavi prazno</span>
+          <input formControlName="hp" type="text" tabindex="-1" autocomplete="off" />
+        </label>
+
         <label class="check" [class.bad]="invalid('terms')">
           <input type="checkbox" formControlName="terms" />
-          <span>Slažem se s uslovima. Rezervacija nije potvrđena dok je lokal ne potvrdi mailom.</span>
+          <span>
+            Slažem se da se moji podaci (ime, telefon, email) koriste isključivo za potrebe ove rezervacije, u skladu s
+            <a routerLink="/privatnost" target="_blank" rel="noopener">politikom privatnosti</a>. Rezervacija nije potvrđena dok je lokal ne potvrdi mailom.
+          </span>
         </label>
 
         <div class="summary" [class.ready]="table()">

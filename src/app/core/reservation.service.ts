@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { ReservationRequest, ReservationResult, Venue, VenueEvent } from './models';
+import { ReservationRequest, ReservationResult, ReservationStatus, Venue, VenueEvent } from './models';
 import { API_BASE } from './api-config';
 
 @Injectable({ providedIn: 'root' })
@@ -27,5 +27,9 @@ export class ReservationService {
         return throwError(() => new Error(msg));
       }),
     );
+  }
+
+  getReservationStatus(id: string): Observable<ReservationStatus> {
+    return this.http.get<ReservationStatus>(`${API_BASE}/reservations/${id}/status`);
   }
 }

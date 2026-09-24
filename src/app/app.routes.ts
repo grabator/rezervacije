@@ -11,8 +11,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/event/event-page.component').then(m => m.EventPageComponent),
   },
   {
+    path: 'r/:venue/rezervacije/status/:id',
+    loadComponent: () => import('./pages/reservation-status/reservation-status-page.component').then(m => m.ReservationStatusPageComponent),
+  },
+  {
     path: 'r/:venue/admin',
     loadComponent: () => import('./pages/admin/admin-page.component').then(m => m.AdminPageComponent),
+  },
+  {
+    path: 'privatnost',
+    loadComponent: () => import('./pages/privacy/privacy-page.component').then(m => m.PrivacyPageComponent),
   },
   { path: '**', redirectTo: '' },
 ];
