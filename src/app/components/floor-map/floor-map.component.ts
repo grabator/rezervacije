@@ -27,6 +27,12 @@ export class FloorMapComponent {
     if (t.status === 'free') this.select.emit(t);
   }
 
+  hitR(t: FloorTable): number { return (t.size || 48) / 2; }
+  topR(t: FloorTable): number { return this.hitR(t) * (16 / 24); }
+  chairOffset(t: FloorTable): number { return this.hitR(t) * (22 / 24); }
+  chairR(t: FloorTable): number { return this.hitR(t) * (4 / 24); }
+  fontSize(t: FloorTable): number { return Math.max(8, this.hitR(t) * (9.5 / 24)); }
+
   ariaLabel(t: FloorTable): string {
     const map = { free: 'slobodan', pending: 'na čekanju', taken: 'zauzet', unavailable: 'nedostupan' } as const;
     return `Sto ${t.label}, ${t.seats} mjesta, ${t.id === this.selectedId() ? 'izabran' : map[t.status]}`;

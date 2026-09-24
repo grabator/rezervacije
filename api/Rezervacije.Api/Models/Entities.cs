@@ -59,6 +59,7 @@ public class FloorTableEntity
     public string Label { get; set; } = "";
     public int X { get; set; }
     public int Y { get; set; }
+    public int Size { get; set; } = 48;
     public int Seats { get; set; }
     public string Shape { get; set; } = "round";
     public string Status { get; set; } = "free";

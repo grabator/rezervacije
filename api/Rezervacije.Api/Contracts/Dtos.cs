@@ -6,7 +6,7 @@ public record TablePackageDto(string Id, string Name, int Persons, decimal Price
 
 public record FloorElementDto(string Kind, int X, int Y, int W, int H, string? Text);
 
-public record FloorTableDto(string Id, string Label, int X, int Y, int Seats, string Shape, string Status);
+public record FloorTableDto(string Id, string Label, int X, int Y, int Seats, string Shape, string Status, int Size);
 
 public record FloorPlanDto(int Width, int Height, List<FloorElementDto> Elements, List<FloorTableDto> Tables);
 

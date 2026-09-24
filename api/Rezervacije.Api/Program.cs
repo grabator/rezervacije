@@ -179,7 +179,7 @@ static async Task<VenueEventDto> ToEventDto(string eventId, AppDbContext db, str
         .Select(el => new FloorElementDto(el.Kind, el.X, el.Y, el.W, el.H, el.Text))
         .ToListAsync();
     var tables = await db.Tables.Where(t => t.EventId == eventId)
-        .Select(t => new FloorTableDto(t.TableKey, t.Label, t.X, t.Y, t.Seats, t.Shape, t.Status))
+        .Select(t => new FloorTableDto(t.TableKey, t.Label, t.X, t.Y, t.Seats, t.Shape, t.Status, t.Size))
         .ToListAsync();
 
     return new VenueEventDto(

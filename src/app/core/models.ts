@@ -12,6 +12,7 @@ export interface FloorTable {
   label: string;
   x: number;           // centar stola u koordinatama mape (viewBox)
   y: number;
+  size: number;         // precnik stola na mapi (default 48)
   seats: number;
   shape: 'round' | 'square';
   status: TableStatus;
