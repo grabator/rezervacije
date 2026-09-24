@@ -9,36 +9,42 @@ export const VENUES: Venue[] = [
   },
 ];
 
-/** Pomoćna funkcija: red stolova na istoj x-osi */
-function column(prefix: string, start: number, x: number, ys: number[], statuses: Record<number, FloorTable['status']> = {}): FloorTable[] {
-  return ys.map((y, i) => {
+/** Pomoćna funkcija: red stolova na istoj y-osi (horizontalni raspored sale) */
+function row(
+  prefix: string,
+  start: number,
+  y: number,
+  xs: number[],
+  statuses: Record<number, FloorTable['status']> = {},
+  shapes: Record<number, FloorTable['shape']> = {},
+): FloorTable[] {
+  return xs.map((x, i) => {
     const n = start + i;
-    return { id: `${prefix}${n}`, label: `${prefix}${n}`, x, y, seats: 4, shape: 'round', status: statuses[n] ?? 'free' };
+    const shape = shapes[n] ?? 'round';
+    return { id: `${prefix}${n}`, label: `${prefix}${n}`, x, y, seats: shape === 'square' ? 2 : 4, shape, status: statuses[n] ?? 'free' };
   });
 }
 
-// Primjer rasporeda (izmišljen) – zamijeni stvarnim rasporedom lokala
+// Stvarni raspored sale (po skici vlasnika) – ulaz i bašta lijevo, šank/shisha uz ulaz,
+// WC/igrice/stepenice u suprotnom uglu, stolovi popunjavaju salu između.
 const PLAN: FloorPlan = {
-  width: 400,
-  height: 560,
+  width: 760,
+  height: 400,
   elements: [
-    { kind: 'bar', x: 110, y: 20, w: 270, h: 34, text: 'Šank' },
-    { kind: 'label', x: 20, y: 20, w: 80, h: 34, text: 'Shisha' },
-    { kind: 'tv', x: 30, y: 66, w: 70, h: 6 },
-    { kind: 'tv', x: 165, y: 66, w: 70, h: 6 },
-    { kind: 'tv', x: 300, y: 66, w: 70, h: 6 },
-    { kind: 'sofa', x: 14, y: 90, w: 18, h: 220 },
-    { kind: 'sofa', x: 368, y: 90, w: 18, h: 440 },
-    { kind: 'sofa', x: 190, y: 120, w: 20, h: 150 },
-    { kind: 'entrance', x: 150, y: 540, w: 100, h: 14, text: 'Ulaz' },
+    { kind: 'label', x: 40, y: 20, w: 120, h: 34, text: 'Shisha' },
+    { kind: 'bar', x: 180, y: 20, w: 460, h: 34, text: 'Šank' },
+    { kind: 'sofa', x: 4, y: 60, w: 14, h: 80 },
+    { kind: 'entrance', x: 4, y: 170, w: 70, h: 20, text: 'Ulaz' },
+    { kind: 'entrance', x: 4, y: 320, w: 70, h: 20, text: 'Bašta' },
+    { kind: 'sofa', x: 750, y: 60, w: 14, h: 220 },
+    { kind: 'label', x: 640, y: 230, w: 110, h: 60, text: 'Igrice' },
+    { kind: 'label', x: 640, y: 300, w: 110, h: 76, text: 'WC' },
   ],
   tables: [
-    ...column('S', 1, 62, [110, 170, 230, 290], { 2: 'taken' }),
-    ...column('S', 5, 150, [110, 170, 230], { 6: 'pending' }),
-    ...column('S', 8, 250, [130, 190, 250], { 9: 'taken' }),
-    ...column('S', 11, 335, [110, 170, 230, 290, 350, 410, 470], { 13: 'taken', 14: 'taken', 17: 'unavailable' }),
-    ...column('S', 18, 110, [370, 430, 490], { 19: 'taken' }),
-    ...column('S', 21, 230, [340, 410, 480]),
+    ...row('S', 1, 100, [200, 280, 360, 440, 520, 600], { 2: 'taken', 6: 'pending' }, { 1: 'square', 2: 'square' }),
+    ...row('S', 7, 180, [200, 280, 360, 440, 520, 600, 680], { 9: 'taken', 13: 'taken' }),
+    ...row('S', 14, 260, [200, 280, 360, 440, 520, 600], { 14: 'taken', 17: 'unavailable', 19: 'taken' }),
+    ...row('S', 20, 340, [200, 280, 360, 440]),
   ],
 };
 
