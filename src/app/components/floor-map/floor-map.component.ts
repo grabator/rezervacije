@@ -35,6 +35,6 @@ export class FloorMapComponent {
 
   ariaLabel(t: FloorTable): string {
     const map = { free: 'slobodan', pending: 'na čekanju', taken: 'zauzet', unavailable: 'nedostupan' } as const;
-    return `Sto ${t.label}, ${t.seats} mjesta, ${t.id === this.selectedId() ? 'izabran' : map[t.status]}`;
+    return `Stol ${t.label}, ${t.seats} mjesta, ${t.id === this.selectedId() ? 'izabran' : map[t.status]}`;
   }
 }

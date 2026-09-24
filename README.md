@@ -44,7 +44,7 @@ Otvori http://localhost:4200 (u Chrome DevTools uključi mobilni prikaz, Ctrl+Sh
   - `GET /api/venues/{slug}`
   - `GET /api/venues/{slug}/events`
   - `GET /api/events/{id}`
-  - `POST /api/reservations` — server provjerava da je sto slobodan prije nego ga zaključa (status `pending`), zaštita od duple rezervacije
+  - `POST /api/reservations` — server provjerava da je stol slobodan prije nego ga zaključa (status `pending`), zaštita od duple rezervacije
   - `GET /api/admin/reservations`, `POST /api/admin/reservations/{id}/confirm|reject` — zaštićeno headerom `X-Admin-Password`
 
 ## Editor rasporeda sale

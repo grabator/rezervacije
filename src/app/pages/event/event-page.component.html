@@ -22,13 +22,13 @@
       <section class="card done" aria-live="polite">
         <div class="tick" aria-hidden="true">✓</div>
         <h2>Zahtjev je poslan</h2>
-        <p>Sto <b>{{ table()?.label }}</b> je rezervisan za tebe. Rezervacija važi tek kad ti je lokal potvrdi na <b>{{ form.controls.email.value }}</b>.</p>
+        <p>Stol <b>{{ table()?.label }}</b> je rezervisan za tebe. Rezervacija važi tek kad ti je lokal potvrdi na <b>{{ form.controls.email.value }}</b>.</p>
       </section>
     } @else {
       <section class="card">
         <div class="card-head">
-          <h2>Izaberi sto</h2>
-          <small>Sto se rezerviše za cijeli event.</small>
+          <h2>Izaberi stol</h2>
+          <small>Stol se rezerviše za cijeli event.</small>
         </div>
         <ul class="legend">
           <li data-s="free">Slobodan</li>
@@ -68,7 +68,7 @@
         </label>
 
         <div class="summary" [class.ready]="table()">
-          <b>{{ table() ? 'Sto ' + table()!.label : 'Sto nije izabran' }}</b>
+          <b>{{ table() ? 'Stol ' + table()!.label : 'Stol nije izabran' }}</b>
         </div>
 
         @if (error()) { <p class="err" role="alert">{{ error() }}</p> }

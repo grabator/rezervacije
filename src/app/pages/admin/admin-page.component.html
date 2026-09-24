@@ -47,6 +47,29 @@
       </button>
     </nav>
 
+    @if (availableEvents().length > 1 || availableTables().length > 1) {
+      <div class="filter-row">
+        @if (availableEvents().length > 1) {
+          <label class="select-field">
+            <span>Event</span>
+            <select [ngModel]="eventFilter()" (ngModelChange)="onEventFilterChange($event)">
+              <option value="all">Svi eventi</option>
+              @for (e of availableEvents(); track e.id) { <option [value]="e.id">{{ e.title }}</option> }
+            </select>
+          </label>
+        }
+        @if (availableTables().length > 1) {
+          <label class="select-field">
+            <span>Stol</span>
+            <select [ngModel]="tableFilter()" (ngModelChange)="tableFilter.set($event)">
+              <option value="all">Svi stolovi</option>
+              @for (t of availableTables(); track t) { <option [value]="t">{{ t }}</option> }
+            </select>
+          </label>
+        }
+      </div>
+    }
+
     @if (filtered().length === 0) {
       <p class="empty">
         @if (filter() === 'pending') { Nema zahtjeva na čekanju. }

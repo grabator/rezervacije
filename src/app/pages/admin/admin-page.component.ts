@@ -24,6 +24,8 @@ export class AdminPageComponent {
   reservations = signal<AdminReservation[]>([]);
   actingOn = signal<string | null>(null);
   filter = signal<StatusFilter>('pending');
+  eventFilter = signal<string>('all');
+  tableFilter = signal<string>('all');
 
   passwordInput = '';
 
@@ -37,11 +39,39 @@ export class AdminPageComponent {
     };
   });
 
+  availableEvents = computed(() => {
+    const map = new Map<string, string>();
+    for (const r of this.reservations()) map.set(r.eventId, r.eventTitle);
+    return [...map.entries()].map(([id, title]) => ({ id, title }));
+  });
+
+  availableTables = computed(() => {
+    const ev = this.eventFilter();
+    const labels = new Set<string>();
+    for (const r of this.reservations()) {
+      if (ev === 'all' || r.eventId === ev) labels.add(r.tableLabel);
+    }
+    return [...labels].sort((a, b) => {
+      const na = parseInt(a.replace(/\D/g, ''), 10), nb = parseInt(b.replace(/\D/g, ''), 10);
+      return !isNaN(na) && !isNaN(nb) ? na - nb : a.localeCompare(b);
+    });
+  });
+
   filtered = computed(() => {
     const f = this.filter();
-    const list = this.reservations();
-    return f === 'all' ? list : list.filter(r => r.status === f);
+    const ev = this.eventFilter();
+    const tbl = this.tableFilter();
+    return this.reservations().filter(r =>
+      (f === 'all' || r.status === f) &&
+      (ev === 'all' || r.eventId === ev) &&
+      (tbl === 'all' || r.tableLabel === tbl)
+    );
   });
+
+  onEventFilterChange(id: string) {
+    this.eventFilter.set(id);
+    this.tableFilter.set('all');
+  }
 
   constructor() {
     if (this.password()) this.tryLoad(this.password());

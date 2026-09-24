@@ -6,6 +6,7 @@ using Rezervacije.Api.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
+builder.Services.AddResponseCompression();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("Default") ?? "Data Source=rezervacije.db"));
@@ -21,7 +22,29 @@ builder.Services.AddCors(opt =>
         .AllowAnyMethod());
 });
 
+var adminPassword = builder.Configuration["AdminPassword"];
+if (builder.Environment.IsProduction() && string.IsNullOrWhiteSpace(adminPassword))
+{
+    // Fail-fast: bolje da se app uopste ne pokrene u produkciji nego da radi
+    // sa praznom/pogadjivom admin lozinkom. Postavi AdminPassword kao pravi
+    // secret (env var / hosting platform secret), ne u appsettings.json.
+    throw new InvalidOperationException(
+        "AdminPassword nije postavljen. U produkciji mora biti pravi secret " +
+        "(environment varijabla), ne vrijednost iz appsettings.json.");
+}
+adminPassword ??= "promijeni-me";
+
 var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler(a => a.Run(async ctx =>
+    {
+        ctx.Response.StatusCode = 500;
+        ctx.Response.ContentType = "application/json";
+        await ctx.Response.WriteAsJsonAsync(new { message = "Došlo je do greške na serveru." });
+    }));
+}
 
 using (var scope = app.Services.CreateScope())
 {
@@ -35,9 +58,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseResponseCompression();
 app.UseCors();
-
-var adminPassword = builder.Configuration["AdminPassword"] ?? "promijeni-me";
 
 // ---- Javni API (frontend za goste) ----
 
@@ -67,12 +89,21 @@ app.MapGet("/api/events/{id}", async (string id, AppDbContext db) =>
 
 app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext db) =>
 {
+    if (string.IsNullOrWhiteSpace(req.FullName) || req.FullName.Trim().Length < 3)
+        return Results.BadRequest(new { message = "Upiši ime i prezime." });
+    if (string.IsNullOrWhiteSpace(req.Phone) || req.Phone.Trim().Length < 6)
+        return Results.BadRequest(new { message = "Upiši ispravan broj telefona." });
+    if (string.IsNullOrWhiteSpace(req.Email) || !req.Email.Contains('@') || !req.Email.Contains('.'))
+        return Results.BadRequest(new { message = "Upiši ispravan email." });
+    if (string.IsNullOrWhiteSpace(req.EventId) || string.IsNullOrWhiteSpace(req.TableId))
+        return Results.BadRequest(new { message = "Nedostaju podaci o eventu ili stolu." });
+
     using var tx = await db.Database.BeginTransactionAsync();
 
     var table = await db.Tables.FirstOrDefaultAsync(t => t.EventId == req.EventId && t.TableKey == req.TableId);
     if (table is null || table.Status != "free")
     {
-        return Results.Conflict(new { message = "Ovaj sto je u međuvremenu zauzet. Izaberi drugi." });
+        return Results.Conflict(new { message = "Ovaj stol je u međuvremenu zauzet. Izaberi drugi." });
     }
     string? packageId = null;
     if (!string.IsNullOrWhiteSpace(req.PackageId))
@@ -186,3 +217,6 @@ static async Task<VenueEventDto> ToEventDto(string eventId, AppDbContext db, str
         e.Id, venueSlug, e.Title, e.Subtitle, e.StartsAt, e.ImageUrl,
         packages, new FloorPlanDto(e.FloorWidth, e.FloorHeight, elements, tables));
 }
+
+// Omogucava WebApplicationFactory<Program> u test projektu da pokrene ovu app.
+public partial class Program { }

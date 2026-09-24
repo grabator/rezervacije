@@ -49,7 +49,7 @@ export class EventPageComponent {
 
   submit(ev: VenueEvent) {
     this.error.set(null);
-    if (!this.table()) { this.error.set('Izaberi sto na mapi.'); return; }
+    if (!this.table()) { this.error.set('Izaberi stol na mapi.'); return; }
     if (this.form.invalid) { this.form.markAllAsTouched(); this.error.set('Popuni obavezna polja označena crvenom.'); return; }
 
     const v = this.form.getRawValue();

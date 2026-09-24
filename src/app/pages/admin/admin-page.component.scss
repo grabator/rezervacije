@@ -77,6 +77,18 @@ h1 { font-family: 'Playfair Display', Georgia, serif; }
 .tabs button.active { color: var(--gold); border-color: var(--gold); }
 .tabs button:hover:not(.active) { color: var(--ivory); }
 
+.filter-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.select-field { display: flex; flex-direction: column; gap: 5px; }
+.select-field span { font: 600 10.5px var(--font); letter-spacing: .08em; text-transform: uppercase; color: var(--ivory-soft); }
+.select-field select {
+  font: 500 13px var(--font); padding: 8px 30px 8px 10px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ivory); cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239B9A96'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+}
+.select-field select:focus { outline: none; border-color: var(--gold); }
+
 .empty { text-align: center; color: var(--ivory-soft); padding: 70px 0; font-size: 14px; }
 
 .list { display: grid; gap: 12px; }
