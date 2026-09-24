@@ -1,9 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminReservation, AdminService } from '../../core/admin.service';
 
 const STORAGE_KEY = 'rezervacije-admin-pw';
+
+type StatusFilter = 'pending' | 'confirmed' | 'rejected' | 'all';
 
 @Component({
   selector: 'app-admin-page',
@@ -21,8 +23,25 @@ export class AdminPageComponent {
   loading = signal(false);
   reservations = signal<AdminReservation[]>([]);
   actingOn = signal<string | null>(null);
+  filter = signal<StatusFilter>('pending');
 
   passwordInput = '';
+
+  counts = computed(() => {
+    const list = this.reservations();
+    return {
+      all: list.length,
+      pending: list.filter(r => r.status === 'pending').length,
+      confirmed: list.filter(r => r.status === 'confirmed').length,
+      rejected: list.filter(r => r.status === 'rejected').length,
+    };
+  });
+
+  filtered = computed(() => {
+    const f = this.filter();
+    const list = this.reservations();
+    return f === 'all' ? list : list.filter(r => r.status === f);
+  });
 
   constructor() {
     if (this.password()) this.tryLoad(this.password());
@@ -82,6 +101,5 @@ export class AdminPageComponent {
 }
 
 function sortReservations(list: AdminReservation[]): AdminReservation[] {
-  const order: Record<string, number> = { pending: 0, confirmed: 1, rejected: 2 };
-  return [...list].sort((a, b) => order[a.status] - order[b.status] || b.createdAt.localeCompare(a.createdAt));
+  return [...list].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }

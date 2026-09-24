@@ -1,38 +1,66 @@
 @if (!authed()) {
   <main class="gate">
-    <form class="gate-card" (ngSubmit)="submitPassword()">
+    <div class="gate-card">
+      <img class="seal" src="logo.jpg" alt="Exclusive Caffe Lounge" />
+      <p class="eyebrow">Exclusive Caffe Lounge</p>
       <h1>Admin</h1>
-      <p>Exclusive Caffe Lounge — pregled rezervacija</p>
-      <label class="field">
-        <span>Lozinka</span>
-        <input type="password" name="password" [(ngModel)]="passwordInput" autocomplete="current-password" autofocus />
-      </label>
-      @if (authError()) { <p class="err">{{ authError() }}</p> }
-      <button class="cta" type="submit" [disabled]="loading()">{{ loading() ? 'Provjeravam…' : 'Uđi' }}</button>
-    </form>
+      <form (ngSubmit)="submitPassword()">
+        <label class="field">
+          <span>Lozinka</span>
+          <input type="password" name="password" [(ngModel)]="passwordInput" autocomplete="current-password" autofocus />
+        </label>
+        @if (authError()) { <p class="err">{{ authError() }}</p> }
+        <button class="cta" type="submit" [disabled]="loading()">{{ loading() ? 'Provjeravam…' : 'Uđi' }}</button>
+      </form>
+    </div>
   </main>
 } @else {
   <main class="admin">
     <header class="topbar">
-      <div>
-        <h1>Rezervacije</h1>
-        <p>Exclusive Caffe Lounge</p>
+      <div class="brand">
+        <img class="seal-sm" src="logo.jpg" alt="" />
+        <div>
+          <p class="eyebrow">Exclusive Caffe Lounge</p>
+          <h1>Rezervacije</h1>
+        </div>
       </div>
       <div class="actions">
-        <button class="btn" (click)="refresh()" [disabled]="loading()">{{ loading() ? '…' : 'Osvježi' }}</button>
-        <button class="btn ghost" (click)="logout()">Odjava</button>
+        <button class="icon-btn" (click)="refresh()" [disabled]="loading()" [attr.aria-label]="'Osvježi'" title="Osvježi">
+          <span [class.spin]="loading()">↻</span>
+        </button>
+        <button class="text-btn" (click)="logout()">Odjava</button>
       </div>
     </header>
 
-    @if (reservations().length === 0) {
-      <p class="empty">Nema zahtjeva za rezervaciju.</p>
+    <nav class="tabs" role="tablist">
+      <button role="tab" [class.active]="filter() === 'pending'" (click)="filter.set('pending')">
+        Na čekanju <b>{{ counts().pending }}</b>
+      </button>
+      <button role="tab" [class.active]="filter() === 'confirmed'" (click)="filter.set('confirmed')">
+        Potvrđeno <b>{{ counts().confirmed }}</b>
+      </button>
+      <button role="tab" [class.active]="filter() === 'rejected'" (click)="filter.set('rejected')">
+        Odbijeno <b>{{ counts().rejected }}</b>
+      </button>
+      <button role="tab" [class.active]="filter() === 'all'" (click)="filter.set('all')">
+        Sve <b>{{ counts().all }}</b>
+      </button>
+    </nav>
+
+    @if (filtered().length === 0) {
+      <p class="empty">
+        @if (filter() === 'pending') { Nema zahtjeva na čekanju. }
+        @else if (filter() === 'confirmed') { Nema potvrđenih rezervacija. }
+        @else if (filter() === 'rejected') { Nema odbijenih zahtjeva. }
+        @else { Još nema nijednog zahtjeva za rezervaciju. }
+      </p>
     } @else {
       <div class="list">
-        @for (r of reservations(); track r.id) {
-          <article class="card" [class.pending]="r.status === 'pending'">
+        @for (r of filtered(); track r.id) {
+          <article class="card" [attr.data-status]="r.status">
             <div class="card-top">
               <span class="table-badge">{{ r.tableLabel }}</span>
-              <span class="status" [attr.data-status]="r.status">
+              <span class="status">
                 {{ r.status === 'pending' ? 'Na čekanju' : r.status === 'confirmed' ? 'Potvrđeno' : 'Odbijeno' }}
               </span>
             </div>
@@ -41,7 +69,7 @@
               <a [href]="'tel:' + r.phone">{{ r.phone }}</a>
               <a [href]="'mailto:' + r.email">{{ r.email }}</a>
             </div>
-            <p class="pkg">{{ r.packageName }} · {{ r.eventTitle }}</p>
+            <p class="pkg">{{ r.packageName }} <span class="dot">·</span> {{ r.eventTitle }}</p>
             @if (r.note) { <p class="note">„{{ r.note }}"</p> }
             <p class="when">{{ r.createdAt | date: 'd.M.yyyy. HH:mm' }}</p>
 
