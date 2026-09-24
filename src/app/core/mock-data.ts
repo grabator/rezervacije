@@ -9,42 +9,32 @@ export const VENUES: Venue[] = [
   },
 ];
 
-/** Pomoćna funkcija: red stolova na istoj y-osi (horizontalni raspored sale) */
-function row(
-  prefix: string,
-  start: number,
-  y: number,
-  xs: number[],
-  statuses: Record<number, FloorTable['status']> = {},
-  shapes: Record<number, FloorTable['shape']> = {},
-): FloorTable[] {
-  return xs.map((x, i) => {
-    const n = start + i;
-    const shape = shapes[n] ?? 'round';
-    return { id: `${prefix}${n}`, label: `${prefix}${n}`, x, y, seats: shape === 'square' ? 2 : 4, shape, status: statuses[n] ?? 'free' };
-  });
-}
-
-// Stvarni raspored sale (po skici vlasnika) – ulaz i bašta lijevo, šank/shisha uz ulaz,
-// WC/igrice/stepenice u suprotnom uglu, stolovi popunjavaju salu između.
+// Stvarni raspored sale (po opisu vlasnika):
+// - ulaz lijevo, odmah 3 stola u koloni (jedan za 8 osoba)
+// - gore-lijevo šank, odmah iza njega shisha
+// - desno od šanka/shishe je WC
+// - ispred WC-a viseći sto za 4 osobe
+// - desno od njega red od 6 stolova, svaki za 4 osobe
 const PLAN: FloorPlan = {
-  width: 760,
-  height: 400,
+  width: 880,
+  height: 280,
   elements: [
-    { kind: 'label', x: 40, y: 20, w: 120, h: 34, text: 'Shisha' },
-    { kind: 'bar', x: 180, y: 20, w: 460, h: 34, text: 'Šank' },
-    { kind: 'sofa', x: 4, y: 60, w: 14, h: 80 },
-    { kind: 'entrance', x: 4, y: 170, w: 70, h: 20, text: 'Ulaz' },
-    { kind: 'entrance', x: 4, y: 320, w: 70, h: 20, text: 'Bašta' },
-    { kind: 'sofa', x: 750, y: 60, w: 14, h: 220 },
-    { kind: 'label', x: 640, y: 230, w: 110, h: 60, text: 'Igrice' },
-    { kind: 'label', x: 640, y: 300, w: 110, h: 76, text: 'WC' },
+    { kind: 'entrance', x: 4, y: 80, w: 50, h: 20, text: 'Ulaz' },
+    { kind: 'bar', x: 10, y: 10, w: 140, h: 30, text: 'Šank' },
+    { kind: 'label', x: 160, y: 10, w: 90, h: 30, text: 'Shisha' },
+    { kind: 'label', x: 270, y: 10, w: 110, h: 80, text: 'WC' },
   ],
   tables: [
-    ...row('S', 1, 100, [200, 280, 360, 440, 520, 600], { 2: 'taken', 6: 'pending' }, { 1: 'square', 2: 'square' }),
-    ...row('S', 7, 180, [200, 280, 360, 440, 520, 600, 680], { 9: 'taken', 13: 'taken' }),
-    ...row('S', 14, 260, [200, 280, 360, 440, 520, 600], { 14: 'taken', 17: 'unavailable', 19: 'taken' }),
-    ...row('S', 20, 340, [200, 280, 360, 440]),
+    { id: 'S1', label: 'S1', x: 70, y: 80, seats: 4, shape: 'round', status: 'free' },
+    { id: 'S2', label: 'S2', x: 70, y: 150, seats: 8, shape: 'round', status: 'free' },
+    { id: 'S3', label: 'S3', x: 70, y: 220, seats: 4, shape: 'round', status: 'taken' },
+    { id: 'S4', label: 'S4', x: 340, y: 140, seats: 4, shape: 'square', status: 'free' },
+    { id: 'S5', label: 'S5', x: 450, y: 140, seats: 4, shape: 'round', status: 'free' },
+    { id: 'S6', label: 'S6', x: 520, y: 140, seats: 4, shape: 'round', status: 'pending' },
+    { id: 'S7', label: 'S7', x: 590, y: 140, seats: 4, shape: 'round', status: 'free' },
+    { id: 'S8', label: 'S8', x: 660, y: 140, seats: 4, shape: 'round', status: 'free' },
+    { id: 'S9', label: 'S9', x: 730, y: 140, seats: 4, shape: 'round', status: 'taken' },
+    { id: 'S10', label: 'S10', x: 800, y: 140, seats: 4, shape: 'round', status: 'free' },
   ],
 };
 
