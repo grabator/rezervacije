@@ -12,11 +12,11 @@ export class FloorMapComponent {
   selectedId = input<string | null>(null);
   select = output<FloorTable>();
 
-  zoom = signal(1);
+  zoom = signal(2);
   width = computed(() => `${this.zoom() * 100}%`);
   showList = signal(false);
 
-  zoomIn() { this.zoom.update(z => Math.min(2.5, +(z + 0.5).toFixed(1))); }
+  zoomIn() { this.zoom.update(z => Math.min(4, +(z + 0.5).toFixed(1))); }
   zoomOut() { this.zoom.update(z => Math.max(1, +(z - 0.5).toFixed(1))); }
 
   stateOf(t: FloorTable): string {
