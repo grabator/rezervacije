@@ -43,3 +43,11 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# .NET backend
+api/**/bin/
+api/**/obj/
+api/**/*.db
+api/**/*.db-shm
+api/**/*.db-wal
+api/**/appsettings.Production.json

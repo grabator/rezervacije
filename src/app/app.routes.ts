@@ -10,5 +10,9 @@ export const routes: Routes = [
     path: 'r/:venue/rezervacije/e/:eventId',
     loadComponent: () => import('./pages/event/event-page.component').then(m => m.EventPageComponent),
   },
+  {
+    path: 'r/:venue/admin',
+    loadComponent: () => import('./pages/admin/admin-page.component').then(m => m.AdminPageComponent),
+  },
   { path: '**', redirectTo: '' },
 ];
