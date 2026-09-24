@@ -28,9 +28,9 @@ export class FloorMapComponent {
   }
 
   hitR(t: FloorTable): number { return (t.size || 48) / 2; }
-  topR(t: FloorTable): number { return this.hitR(t) * 0.88; }
-  chairOffset(t: FloorTable): number { return this.hitR(t) * 0.72; }
-  chairR(t: FloorTable): number { return this.hitR(t) * 0.27; }
+  topR(t: FloorTable): number { return this.hitR(t) * 0.6; }
+  chairOffset(t: FloorTable): number { return this.hitR(t) * 0.58; }
+  chairR(t: FloorTable): number { return this.hitR(t) * 0.4; }
   fontSize(t: FloorTable): number { return Math.max(9, this.hitR(t) * 0.48); }
 
   ariaLabel(t: FloorTable): string {
