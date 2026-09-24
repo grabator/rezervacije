@@ -69,7 +69,7 @@
               <a [href]="'tel:' + r.phone">{{ r.phone }}</a>
               <a [href]="'mailto:' + r.email">{{ r.email }}</a>
             </div>
-            <p class="pkg">{{ r.packageName }} <span class="dot">·</span> {{ r.eventTitle }}</p>
+            <p class="pkg">{{ r.packageName ? r.packageName + ' · ' : '' }}{{ r.eventTitle }}</p>
             @if (r.note) { <p class="note">„{{ r.note }}"</p> }
             <p class="when">{{ r.createdAt | date: 'd.M.yyyy. HH:mm' }}</p>
 

@@ -21,7 +21,7 @@ public record VenueEventDto(
     FloorPlanDto FloorPlan
 );
 
-public record ReservationRequestDto(string EventId, string TableId, string PackageId, string FullName, string Phone, string Email, string? Note);
+public record ReservationRequestDto(string EventId, string TableId, string? PackageId, string FullName, string Phone, string Email, string? Note);
 
 public record ReservationResultDto(string ReservationId, string Status);
 
@@ -30,7 +30,7 @@ public record AdminReservationDto(
     string EventId,
     string EventTitle,
     string TableLabel,
-    string PackageName,
+    string? PackageName,
     string FullName,
     string Phone,
     string Email,

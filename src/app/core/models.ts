@@ -56,7 +56,6 @@ export interface VenueEvent {
 export interface ReservationRequest {
   eventId: string;
   tableId: string;
-  packageId: string;
   fullName: string;
   phone: string;
   email: string;

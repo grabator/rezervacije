@@ -8,7 +8,7 @@ export interface AdminReservation {
   eventId: string;
   eventTitle: string;
   tableLabel: string;
-  packageName: string;
+  packageName?: string;
   fullName: string;
   phone: string;
   email: string;

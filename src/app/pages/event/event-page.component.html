@@ -22,7 +22,7 @@
       <section class="card done" aria-live="polite">
         <div class="tick" aria-hidden="true">✓</div>
         <h2>Zahtjev je poslan</h2>
-        <p>Sto <b>{{ table()?.label }}</b>, {{ selectedPackage()?.name }}. Rezervacija važi tek kad ti je lokal potvrdi na <b>{{ form.controls.email.value }}</b>.</p>
+        <p>Sto <b>{{ table()?.label }}</b> je rezervisan za tebe. Rezervacija važi tek kad ti je lokal potvrdi na <b>{{ form.controls.email.value }}</b>.</p>
       </section>
     } @else {
       <section class="card">
@@ -38,23 +38,6 @@
           <li data-s="unavailable">Nedostupan</li>
         </ul>
         <app-floor-map [plan]="ev.floorPlan" [selectedId]="table()?.id ?? null" (select)="pickTable($event)" />
-      </section>
-
-      <section class="card">
-        <div class="card-head"><h2>Paket za sto</h2><small>Izaberi jednu opciju.</small></div>
-        <div class="packages" role="radiogroup" aria-label="Paket">
-          @for (p of ev.packages; track p.id) {
-            <label class="pkg" [class.on]="packageId() === p.id">
-              <input type="radio" name="pkg" [value]="p.id" [checked]="packageId() === p.id" (change)="packageId.set(p.id)" />
-              <span class="pkg-main">
-                <b>{{ p.name }}</b>
-                <small>{{ p.description }}</small>
-                <small class="persons">{{ p.persons }} osobe</small>
-              </span>
-              <span class="price">{{ p.price | number: '1.2-2' }} KM</span>
-            </label>
-          }
-        </div>
       </section>
 
       <form class="card" [formGroup]="form" (ngSubmit)="submit(ev)" novalidate>
@@ -84,12 +67,8 @@
           <span>Slažem se s uslovima. Rezervacija nije potvrđena dok je lokal ne potvrdi mailom.</span>
         </label>
 
-        <div class="summary" [class.ready]="table() && packageId()">
-          <div>
-            <b>{{ table() ? 'Sto ' + table()!.label : 'Sto nije izabran' }}</b>
-            <small>{{ selectedPackage()?.name ?? 'Paket nije izabran' }}</small>
-          </div>
-          <span class="total">{{ selectedPackage() ? (selectedPackage()!.price | number: '1.2-2') + ' KM' : '' }}</span>
+        <div class="summary" [class.ready]="table()">
+          <b>{{ table() ? 'Sto ' + table()!.label : 'Sto nije izabran' }}</b>
         </div>
 
         @if (error()) { <p class="err" role="alert">{{ error() }}</p> }

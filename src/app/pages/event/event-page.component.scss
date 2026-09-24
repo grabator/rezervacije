@@ -33,17 +33,6 @@
 .legend [data-s='taken']::before { border-color: var(--taken); background: #2E1A18; }
 .legend [data-s='unavailable']::before { border-color: var(--muted); background: #241F1A; }
 
-.packages { display: grid; gap: 10px; }
-.pkg { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--line); border-radius: 14px; cursor: pointer; transition: border-color .15s, background .15s, box-shadow .15s; }
-.pkg:hover { border-color: var(--velvet); }
-.pkg input { width: 20px; height: 20px; accent-color: var(--velvet); flex: none; margin: 0; }
-.pkg.on { border-color: var(--velvet); background: var(--surface-2); box-shadow: 0 4px 14px -8px rgba(233, 231, 225, .15); }
-.pkg-main { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.pkg-main b { font-size: 15px; }
-.pkg-main small { color: var(--ink-soft); font-size: 13px; }
-.pkg-main .persons { color: var(--velvet); font-weight: 600; }
-.price { font-weight: 700; white-space: nowrap; }
-
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; font-size: 14px; font-weight: 600; }
 .field i { font-weight: 400; color: var(--ink-soft); font-style: normal; }
 .field input, .field textarea { font: 400 16px var(--font); padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--ink); }
@@ -54,11 +43,8 @@
 .check input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--velvet); flex: none; }
 .check.bad span { color: var(--taken); }
 
-.summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; padding: 14px; border-radius: 14px; background: var(--surface-2); }
-.summary div { display: flex; flex-direction: column; }
-.summary small { color: var(--ink-soft); }
-.summary.ready { background: rgba(233, 231, 225, .08); }
-.total { font-size: 20px; font-weight: 700; color: var(--velvet); }
+.summary { margin-top: 18px; padding: 14px; border-radius: 14px; background: var(--surface-2); font-size: 15px; }
+.summary.ready { background: rgba(233, 231, 225, .08); color: var(--velvet); }
 
 .err { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: #2E1A18; color: var(--taken); font-size: 14px; }
 .cta { width: 100%; margin-top: 14px; padding: 16px; border: 0; border-radius: 14px; background: var(--velvet); color: var(--ink-on-accent); font: 700 16px var(--font); cursor: pointer; transition: background .15s, transform .1s; }

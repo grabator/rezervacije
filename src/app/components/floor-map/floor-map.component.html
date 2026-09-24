@@ -51,3 +51,18 @@
     <button type="button" (click)="zoomOut()" [disabled]="zoom() <= 1" aria-label="Umanji">−</button>
   </div>
 </div>
+
+<button type="button" class="list-toggle" (click)="showList.set(!showList())" [attr.aria-expanded]="showList()">
+  {{ showList() ? 'Sakrij listu stolova' : 'Prikaži listu stolova' }} ({{ plan().tables.length }})
+  <span class="chev" [class.up]="showList()">⌄</span>
+</button>
+
+@if (showList()) {
+  <div class="chip-list" role="group" aria-label="Lista stolova">
+    @for (t of plan().tables; track t.id) {
+      <button type="button" class="chip" [attr.data-state]="stateOf(t)" [disabled]="t.status !== 'free'" (click)="onTable(t)">
+        {{ t.label }} <span class="seats">· {{ t.seats }} os.</span>
+      </button>
+    }
+  </div>
+}

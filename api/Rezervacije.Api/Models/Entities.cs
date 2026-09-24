@@ -71,7 +71,7 @@ public class Reservation
     public VenueEvent? Event { get; set; }
     public int TableEntityId { get; set; }
     public FloorTableEntity? Table { get; set; }
-    public string PackageId { get; set; } = "";
+    public string? PackageId { get; set; }
     public TablePackage? Package { get; set; }
     public string FullName { get; set; } = "";
     public string Phone { get; set; } = "";

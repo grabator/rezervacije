@@ -74,10 +74,15 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
     {
         return Results.Conflict(new { message = "Ovaj sto je u međuvremenu zauzet. Izaberi drugi." });
     }
-    var package = await db.Packages.FirstOrDefaultAsync(p => p.Id == req.PackageId && p.EventId == req.EventId);
-    if (package is null)
+    string? packageId = null;
+    if (!string.IsNullOrWhiteSpace(req.PackageId))
     {
-        return Results.BadRequest(new { message = "Nepoznat paket." });
+        var package = await db.Packages.FirstOrDefaultAsync(p => p.Id == req.PackageId && p.EventId == req.EventId);
+        if (package is null)
+        {
+            return Results.BadRequest(new { message = "Nepoznat paket." });
+        }
+        packageId = package.Id;
     }
 
     table.Status = "pending";
@@ -87,7 +92,7 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
         Id = Guid.NewGuid(),
         EventId = req.EventId,
         TableEntityId = table.Id,
-        PackageId = req.PackageId,
+        PackageId = packageId,
         FullName = req.FullName,
         Phone = req.Phone,
         Email = req.Email,
