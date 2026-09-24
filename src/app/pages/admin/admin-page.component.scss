@@ -2,18 +2,18 @@
   display: block;
   min-height: 100vh;
 
-  --noir: #121110;
-  --noir-deep: #0B0A09;
-  --surface: #1C1a16;
-  --surface-2: #24211C;
-  --line: #34302A;
-  --ivory: #EEE7D9;
-  --ivory-soft: #A89C87;
-  --gold: #C6A15B;
-  --gold-bright: #E4C98A;
-  --pending: #C6A15B;
-  --confirmed: #83A583;
-  --rejected: #B06B60;
+  --noir: #151514;
+  --noir-deep: #0E0E0D;
+  --surface: #1E1E1C;
+  --surface-2: #262624;
+  --line: #383733;
+  --ivory: #F2F1EE;
+  --ivory-soft: #9B9A96;
+  --gold: #E9E7E1;
+  --gold-bright: #FFFFFF;
+  --pending: #A08B5E;
+  --confirmed: #7A9A82;
+  --rejected: #A8635A;
 
   background: var(--noir);
   color: var(--ivory);
