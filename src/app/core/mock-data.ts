@@ -20,11 +20,12 @@ const PLAN: FloorPlan = {
     { kind: 'tv', x: 48, y: 410, w: 50, h: 6 },
     { kind: 'tv', x: 880, y: 483, w: 6, h: 60 },
     { kind: 'entrance', x: 173, y: 420, w: 36, h: 20, text: 'Ulaz' },
-    { kind: 'entrance', x: 176, y: 591, w: 36, h: 20, text: 'Bašta' },
+    { kind: 'entrance', x: 176, y: 560, w: 36, h: 20, text: 'Bašta' },
     { kind: 'label', x: 207, y: 110, w: 90, h: 30, text: 'Igrice' },
     { kind: 'label', x: 772, y: 258, w: 90, h: 30, text: 'Igrice' },
     { kind: 'tv', x: 278, y: 356, w: 50, h: 6 },
     { kind: 'tv', x: 598, y: 356, w: 50, h: 6 },
+    { kind: 'entrance', x: 4, y: 440, w: 892, h: 2, text: '' },
   ],
   tables: [
     { id: 'S1', label: 'S1', x: 66, y: 165, seats: 4, shape: 'round', status: 'free' },
