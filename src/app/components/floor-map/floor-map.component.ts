@@ -28,10 +28,10 @@ export class FloorMapComponent {
   }
 
   hitR(t: FloorTable): number { return (t.size || 48) / 2; }
-  topR(t: FloorTable): number { return this.hitR(t) * (16 / 24); }
-  chairOffset(t: FloorTable): number { return this.hitR(t) * (22 / 24); }
-  chairR(t: FloorTable): number { return this.hitR(t) * (4 / 24); }
-  fontSize(t: FloorTable): number { return Math.max(8, this.hitR(t) * (9.5 / 24)); }
+  topR(t: FloorTable): number { return this.hitR(t) * 0.75; }
+  chairOffset(t: FloorTable): number { return this.hitR(t) * 0.8; }
+  chairR(t: FloorTable): number { return this.hitR(t) * 0.2; }
+  fontSize(t: FloorTable): number { return Math.max(9, this.hitR(t) * 0.42); }
 
   ariaLabel(t: FloorTable): string {
     const map = { free: 'slobodan', pending: 'na čekanju', taken: 'zauzet', unavailable: 'nedostupan' } as const;
