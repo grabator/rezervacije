@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
+
+:root {
+  --font: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ink: #1F2A30;
+  --ink-soft: #5B6870;
+  --muted: #A7AEB2;
+  --line: #DDE2E2;
+  --page: #EDEFEE;
+  --surface: #FBFBFA;
+  --surface-2: #F3F5F4;
+  --velvet: #1E4D5C;
+  --velvet-deep: #102A33;
+  --brass: #C8963E;
+  --brass-soft: #EBD3A4;
+  --free: #2E8B6A;
+  --pending: #D9A42B;
+  --taken: #C4453C;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: var(--font); color: var(--ink); background: var(--page); -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
+h1, h2 { font-weight: 700; }

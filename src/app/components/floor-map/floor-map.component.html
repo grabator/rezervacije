@@ -1,0 +1,53 @@
+<div class="map-wrap">
+  <div class="scroller">
+    <svg [attr.viewBox]="'0 0 ' + plan().width + ' ' + plan().height" [style.width]="width()" role="group" aria-label="Raspored stolova">
+      <rect class="room" x="4" y="4" [attr.width]="plan().width - 8" [attr.height]="plan().height - 24" rx="6" />
+
+      @for (el of plan().elements; track $index) {
+        @switch (el.kind) {
+          @case ('bar') {
+            <rect class="bar" [attr.x]="el.x" [attr.y]="el.y" [attr.width]="el.w" [attr.height]="el.h" rx="6" />
+            <text class="el-text" [attr.x]="el.x + el.w / 2" [attr.y]="el.y + el.h / 2 + 4">{{ el.text }}</text>
+          }
+          @case ('label') {
+            <rect class="zone" [attr.x]="el.x" [attr.y]="el.y" [attr.width]="el.w" [attr.height]="el.h" rx="6" />
+            <text class="el-text" [attr.x]="el.x + el.w / 2" [attr.y]="el.y + el.h / 2 + 4">{{ el.text }}</text>
+          }
+          @case ('tv') {
+            <rect class="tv" [attr.x]="el.x" [attr.y]="el.y" [attr.width]="el.w" [attr.height]="el.h" rx="2" />
+            <text class="tv-text" [attr.x]="el.x + el.w / 2" [attr.y]="el.y + 18">TV</text>
+          }
+          @case ('sofa') {
+            <rect class="sofa" [attr.x]="el.x" [attr.y]="el.y" [attr.width]="el.w" [attr.height]="el.h" rx="6" />
+          }
+          @case ('entrance') {
+            <rect class="entrance" [attr.x]="el.x" [attr.y]="el.y" [attr.width]="el.w" [attr.height]="el.h" />
+            <text class="el-text" [attr.x]="el.x + el.w / 2" [attr.y]="el.y + 11">{{ el.text }}</text>
+          }
+        }
+      }
+
+      @for (t of plan().tables; track t.id) {
+        <g class="table" [attr.data-state]="stateOf(t)"
+           [attr.tabindex]="t.status === 'free' ? 0 : -1"
+           [attr.role]="'button'"
+           [attr.aria-label]="ariaLabel(t)"
+           [attr.aria-disabled]="t.status !== 'free'"
+           (click)="onTable(t)" (keydown.enter)="onTable(t)" (keydown.space)="onTable(t); $event.preventDefault()">
+          <circle class="hit" [attr.cx]="t.x" [attr.cy]="t.y" r="24" />
+          <circle class="chair" [attr.cx]="t.x" [attr.cy]="t.y - 22" r="4" />
+          <circle class="chair" [attr.cx]="t.x" [attr.cy]="t.y + 22" r="4" />
+          <circle class="chair" [attr.cx]="t.x - 22" [attr.cy]="t.y" r="4" />
+          <circle class="chair" [attr.cx]="t.x + 22" [attr.cy]="t.y" r="4" />
+          <circle class="top" [attr.cx]="t.x" [attr.cy]="t.y" r="16" />
+          <text class="t-label" [attr.x]="t.x" [attr.y]="t.y + 4">{{ t.label }}</text>
+        </g>
+      }
+    </svg>
+  </div>
+
+  <div class="zoom" role="group" aria-label="Uvećanje mape">
+    <button type="button" (click)="zoomIn()" [disabled]="zoom() >= 2.5" aria-label="Uvećaj">+</button>
+    <button type="button" (click)="zoomOut()" [disabled]="zoom() <= 1" aria-label="Umanji">−</button>
+  </div>
+</div>

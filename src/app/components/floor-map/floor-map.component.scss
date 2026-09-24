@@ -1,0 +1,45 @@
+:host { display: block; }
+.map-wrap { position: relative; border: 1px solid var(--line); border-radius: 18px; background: var(--surface-2); overflow: hidden; }
+.scroller { overflow: auto; max-height: 72vh; padding: 10px 10px 64px; -webkit-overflow-scrolling: touch; }
+svg { display: block; min-width: 100%; height: auto; transition: width .2s ease; }
+
+.room { fill: #fff; stroke: var(--ink); stroke-width: 4; }
+.bar { fill: #D9DCDB; stroke: var(--ink-soft); stroke-width: 1.5; }
+.zone { fill: #F1EEE8; stroke: var(--ink-soft); stroke-width: 1.5; }
+.tv { fill: var(--ink); }
+.sofa { fill: var(--brass-soft); stroke: var(--brass); stroke-width: 1.5; }
+.entrance { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.el-text, .tv-text { font: 600 11px var(--font); fill: var(--ink); text-anchor: middle; }
+.tv-text { font-size: 9px; fill: var(--ink-soft); }
+
+.table { cursor: not-allowed; outline: none; }
+.table .hit { fill: transparent; }
+.table .chair { fill: #E3E6E5; }
+.table .top { stroke-width: 2.5; transition: fill .15s; }
+.table .t-label { font: 700 9.5px var(--font); text-anchor: middle; pointer-events: none; }
+
+.table[data-state='free'] { cursor: pointer; }
+.table[data-state='free'] .top { fill: #EAF6F0; stroke: var(--free); }
+.table[data-state='free'] .t-label { fill: var(--free); }
+.table[data-state='free']:hover .top,
+.table[data-state='free']:focus-visible .top { fill: #CFEBDD; }
+.table:focus-visible .top { stroke: var(--velvet); stroke-width: 4; }
+
+.table[data-state='selected'] { cursor: pointer; }
+.table[data-state='selected'] .top { fill: var(--velvet); stroke: var(--velvet); }
+.table[data-state='selected'] .chair { fill: var(--velvet); opacity: .45; }
+.table[data-state='selected'] .t-label { fill: #fff; }
+
+.table[data-state='pending'] .top { fill: #FBF1D8; stroke: var(--pending); }
+.table[data-state='pending'] .t-label { fill: #8A6412; }
+.table[data-state='taken'] .top { fill: #F8E3E1; stroke: var(--taken); }
+.table[data-state='taken'] .t-label { fill: var(--taken); }
+.table[data-state='unavailable'] .top { fill: #F0F1F1; stroke: var(--muted); }
+.table[data-state='unavailable'] .t-label { fill: var(--muted); }
+
+.zoom { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(22, 50, 58, .12); }
+.zoom button { width: 42px; height: 42px; border: 0; background: none; font: 500 22px var(--font); color: var(--ink); cursor: pointer; }
+.zoom button + button { border-left: 1px solid var(--line); }
+.zoom button:disabled { color: var(--muted); cursor: default; }
+
+@media (prefers-reduced-motion: reduce) { svg { transition: none; } }
