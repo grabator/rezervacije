@@ -1,5 +1,5 @@
 <header class="topbar">
-  <div class="mark">{{ venue()?.name?.charAt(0) ?? '' }}</div>
+  <img class="mark" src="logo.jpg" [alt]="venue()?.name ?? 'Logo'" />
   <div class="who">
     <strong>{{ venue()?.name }}</strong>
     <span>Rezervacija stola</span>
