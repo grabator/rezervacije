@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReservationService } from '../../core/reservation.service';
+import { VenueEvent } from '../../core/models';
 
 @Component({
   selector: 'app-event-list-page',
@@ -19,6 +20,14 @@ export class EventListPageComponent {
   events = toSignal(this.api.getEvents(this.venueSlug), { initialValue: [] });
 
   lastReservationId = this.readLastReservationId();
+
+  freeCount(e: VenueEvent): number {
+    return e.floorPlan.tables.filter(t => t.status === 'free').length;
+  }
+
+  totalCount(e: VenueEvent): number {
+    return e.floorPlan.tables.length;
+  }
 
   private readLastReservationId(): string | null {
     try {

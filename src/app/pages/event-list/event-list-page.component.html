@@ -65,7 +65,11 @@
   @for (e of events(); track e.id) {
     <a class="ev" [routerLink]="['e', e.id]">
       <div class="d"><span>{{ e.startsAt | date: 'MMM' }}</span><b>{{ e.startsAt | date: 'd' }}</b></div>
-      <div class="t"><b>{{ e.title }}</b><small>{{ e.startsAt | date: 'EEEE, HH:mm' }}</small></div>
+      <div class="t">
+        <b>{{ e.title }}</b>
+        <small>{{ e.startsAt | date: 'EEEE, HH:mm' }}</small>
+        <small class="avail">{{ freeCount(e) }}/{{ totalCount(e) }} stolova slobodno</small>
+      </div>
       @if (e.imageUrl) { <img class="thumb" [src]="e.imageUrl" alt="" loading="lazy" /> }
       <span class="go" aria-hidden="true">›</span>
     </a>
