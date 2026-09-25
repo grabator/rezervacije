@@ -1,9 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
 import { ReservationService } from '../../core/reservation.service';
+import { ReservationStatus } from '../../core/models';
 
 const STATUS_LABELS: Record<string, string> = {
   pending: 'Na čekanju',
@@ -22,17 +21,51 @@ const STATUS_LABELS: Record<string, string> = {
 export class ReservationStatusPageComponent {
   private route = inject(ActivatedRoute);
   private api = inject(ReservationService);
+  private reservationId = this.route.snapshot.paramMap.get('id')!;
 
   venueSlug = this.route.snapshot.paramMap.get('venue')!;
 
-  status = toSignal(
-    this.api.getReservationStatus(this.route.snapshot.paramMap.get('id')!).pipe(
-      catchError(() => of(null)),
-    ),
-    { initialValue: undefined },
-  );
+  status = signal<ReservationStatus | null | undefined>(undefined);
+  confirmingCancel = signal(false);
+  cancelling = signal(false);
+  cancelError = signal<string | null>(null);
+
+  constructor() {
+    this.load();
+  }
+
+  private load() {
+    this.api.getReservationStatus(this.reservationId).subscribe({
+      next: (s) => this.status.set(s),
+      error: () => this.status.set(null),
+    });
+  }
 
   statusLabel(status: string): string {
     return STATUS_LABELS[status] ?? status;
+  }
+
+  askCancel() {
+    this.confirmingCancel.set(true);
+  }
+
+  dismissCancel() {
+    this.confirmingCancel.set(false);
+  }
+
+  cancel() {
+    this.cancelling.set(true);
+    this.cancelError.set(null);
+    this.api.cancelReservation(this.reservationId).subscribe({
+      next: () => {
+        this.cancelling.set(false);
+        this.confirmingCancel.set(false);
+        this.load();
+      },
+      error: (e: Error) => {
+        this.cancelling.set(false);
+        this.cancelError.set(e.message);
+      },
+    });
   }
 }

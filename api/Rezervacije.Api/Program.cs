@@ -150,6 +150,28 @@ app.MapGet("/api/reservations/{id}/status", async (Guid id, AppDbContext db) =>
     return Results.Ok(new ReservationStatusDto(r.Id.ToString(), r.Status, eventTitle ?? "", tableLabel ?? "", r.CreatedAt));
 });
 
+// Gost otkazuje SVOJU rezervaciju preko linka koji dobije od lokala (nema admin lozinku -
+// nemoguce dobiti bez tog konkretnog linka jer je id nepogadljiv GUID).
+app.MapPost("/api/reservations/{id}/cancel", async (Guid id, AppDbContext db, IHttpClientFactory httpFactory) =>
+{
+    var res = await db.Reservations.FindAsync(id);
+    if (res is null) return Results.NotFound();
+    if (res.Status != "pending" && res.Status != "confirmed")
+        return Results.BadRequest(new { message = "Ova rezervacija se više ne može otkazati." });
+
+    var table = await db.Tables.FindAsync(res.TableEntityId);
+    res.Status = "cancelled";
+    if (table is not null) table.Status = "free";
+    await db.SaveChangesAsync();
+    logger.LogInformation("Gost otkazao rezervaciju {Id}, stol oslobodjen", id);
+
+    var eventTitle = await db.Events.Where(e => e.Id == res.EventId).Select(e => e.Title).FirstOrDefaultAsync();
+    var notifyText = $"❌ Gost je otkazao rezervaciju\n📅 {eventTitle}\n🪑 Sto {table?.Label}\n👤 {res.FullName}\n📞 {res.Phone}";
+    await NotifyAdminViaTelegram(notifyText, httpFactory);
+
+    return Results.Ok();
+}).RequireRateLimiting("reservations");
+
 app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext db, IHttpClientFactory httpFactory) =>
 {
     if (!string.IsNullOrWhiteSpace(req.Hp))

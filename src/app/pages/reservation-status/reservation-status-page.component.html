@@ -23,6 +23,24 @@
         <h1>{{ s.eventTitle }}</h1>
         <p class="table">Stol {{ s.tableLabel }}</p>
         <p class="when">Poslano {{ s.createdAt | date: 'd.M.yyyy. HH:mm' }}</p>
+
+        @if (s.status === 'pending' || s.status === 'confirmed') {
+          @if (confirmingCancel()) {
+            <div class="confirm-inline">
+              <span>Sigurno da otkažeš ovu rezervaciju?</span>
+              @if (cancelError()) { <em>{{ cancelError() }}</em> }
+              <div class="confirm-inline-actions">
+                <button class="btn-ghost" (click)="dismissCancel()" [disabled]="cancelling()">Odustani</button>
+                <button class="btn-danger" (click)="cancel()" [disabled]="cancelling()">
+                  {{ cancelling() ? 'Otkazujem…' : 'Da, otkaži' }}
+                </button>
+              </div>
+            </div>
+          } @else {
+            <button class="cancel-cta" (click)="askCancel()">Otkaži rezervaciju</button>
+          }
+        }
+
         <a class="back" [routerLink]="['/r', venueSlug, 'rezervacije']">Nazad na eventove</a>
       </section>
     }

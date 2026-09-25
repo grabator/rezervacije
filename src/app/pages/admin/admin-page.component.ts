@@ -35,6 +35,8 @@ export class AdminPageComponent {
   reservations = signal<AdminReservation[]>([]);
   actingOn = signal<string | null>(null);
   confirmingCancelId = signal<string | null>(null);
+  copiedId = signal<string | null>(null);
+  copyFailedId = signal<string | null>(null);
   filter = signal<StatusFilter>('pending');
   eventFilter = signal<string>('all');
   tableFilter = signal<string>('all');
@@ -286,12 +288,45 @@ export class AdminPageComponent {
     URL.revokeObjectURL(url);
   }
 
-  whatsappLink(phone: string): string {
-    return `https://wa.me/${phone.replace(/[^\d]/g, '')}`;
+  statusLink(r: AdminReservation): string {
+    return `${window.location.origin}/r/${this.venueSlug}/rezervacije/status/${r.id}`;
+  }
+
+  confirmedMessage(r: AdminReservation): string {
+    return `Zdravo ${r.fullName}, tvoja rezervacija u Exclusive Caffe Loungeu je potvrđena.\n`
+      + `${r.eventTitle} - sto ${r.tableLabel}.\n`
+      + `Status/otkazivanje: ${this.statusLink(r)}`;
+  }
+
+  whatsappLink(r: AdminReservation): string {
+    const digits = r.phone.replace(/[^\d]/g, '');
+    if (r.status === 'confirmed') {
+      return `https://wa.me/${digits}?text=${encodeURIComponent(this.confirmedMessage(r))}`;
+    }
+    return `https://wa.me/${digits}`;
   }
 
   viberLink(phone: string): string {
     return `viber://chat?number=%2B${phone.replace(/[^\d]/g, '')}`;
+  }
+
+  copyMessage(r: AdminReservation) {
+    this.copyFailedId.set(null);
+    navigator.clipboard.writeText(this.confirmedMessage(r)).then(
+      () => {
+        this.copiedId.set(r.id);
+        setTimeout(() => {
+          if (this.copiedId() === r.id) this.copiedId.set(null);
+        }, 2000);
+      },
+      () => {
+        // Kopiranje moze biti blokirano (npr. bez HTTPS ili bez dozvole) - jasno javi umjesto tihog neuspjeha.
+        this.copyFailedId.set(r.id);
+        setTimeout(() => {
+          if (this.copyFailedId() === r.id) this.copyFailedId.set(null);
+        }, 2500);
+      },
+    );
   }
 }
 

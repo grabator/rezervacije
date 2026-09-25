@@ -32,4 +32,13 @@ export class ReservationService {
   getReservationStatus(id: string): Observable<ReservationStatus> {
     return this.http.get<ReservationStatus>(`${API_BASE}/reservations/${id}/status`);
   }
+
+  cancelReservation(id: string): Observable<object> {
+    return this.http.post(`${API_BASE}/reservations/${id}/cancel`, {}).pipe(
+      catchError((err: HttpErrorResponse) => {
+        const msg = err.error?.message ?? 'Greška pri otkazivanju. Pokušaj ponovo.';
+        return throwError(() => new Error(msg));
+      }),
+    );
+  }
 }
