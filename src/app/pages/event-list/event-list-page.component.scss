@@ -32,6 +32,12 @@
 h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
 p { margin: 2px 0 0; color: var(--ink-soft); }
 
+.last-res {
+  position: relative; z-index: 1; display: block; max-width: 640px; margin: 0 auto; padding: 0 16px 4px;
+  font-size: 13px; font-weight: 600; color: var(--velvet); text-decoration: none;
+}
+.last-res:hover { text-decoration: underline; }
+
 .list { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px; display: grid; gap: 12px; }
 .ev { display: flex; gap: 14px; align-items: center; padding: 14px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); color: inherit; text-decoration: none;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04); transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }

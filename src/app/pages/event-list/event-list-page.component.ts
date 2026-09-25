@@ -14,7 +14,20 @@ import { ReservationService } from '../../core/reservation.service';
 export class EventListPageComponent {
   private route = inject(ActivatedRoute);
   private api = inject(ReservationService);
-  private slug = this.route.snapshot.paramMap.get('venue')!;
-  venue = toSignal(this.api.getVenue(this.slug));
-  events = toSignal(this.api.getEvents(this.slug), { initialValue: [] });
+  venueSlug = this.route.snapshot.paramMap.get('venue')!;
+  venue = toSignal(this.api.getVenue(this.venueSlug));
+  events = toSignal(this.api.getEvents(this.venueSlug), { initialValue: [] });
+
+  lastReservationId = this.readLastReservationId();
+
+  private readLastReservationId(): string | null {
+    try {
+      const raw = localStorage.getItem('rezervacije-last');
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as { venueSlug: string; id: string };
+      return parsed.venueSlug === this.venueSlug ? parsed.id : null;
+    } catch {
+      return null;
+    }
+  }
 }

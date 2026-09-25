@@ -70,14 +70,25 @@
         <ul class="events-list">
           @for (ev of events(); track ev.id) {
             <li>
-              <div>
-                <b>{{ ev.title }}</b>
-                <span>{{ ev.startsAt | date: 'd.M.yyyy. HH:mm' }}</span>
-              </div>
-              <div class="events-list-actions">
-                <button class="icon-btn" (click)="startEditEvent(ev)" title="Izmijeni event" aria-label="Izmijeni event">✎</button>
-                <button class="icon-btn danger" (click)="deleteEvent(ev)" title="Obriši event" aria-label="Obriši event">✕</button>
-              </div>
+              @if (confirmingDeleteEventId() === ev.id) {
+                <div class="confirm-inline">
+                  <span>Obrisati „{{ ev.title }}"? Radi samo ako nema rezervacija.</span>
+                  @if (deleteEventError()) { <em>{{ deleteEventError() }}</em> }
+                  <div class="confirm-inline-actions">
+                    <button class="text-btn" (click)="dismissDeleteEvent()">Odustani</button>
+                    <button class="text-btn danger" (click)="deleteEvent(ev)">Da, obriši</button>
+                  </div>
+                </div>
+              } @else {
+                <div>
+                  <b>{{ ev.title }}</b>
+                  <span>{{ ev.startsAt | date: 'd.M.yyyy. HH:mm' }}</span>
+                </div>
+                <div class="events-list-actions">
+                  <button class="icon-btn" (click)="startEditEvent(ev)" title="Izmijeni event" aria-label="Izmijeni event">✎</button>
+                  <button class="icon-btn danger" (click)="askDeleteEvent(ev)" title="Obriši event" aria-label="Obriši event">✕</button>
+                </div>
+              }
             </li>
           } @empty {
             <li class="empty-row">Nema eventova.</li>
@@ -166,7 +177,7 @@
                   <path d="M12 2C6.48 2 2 6.02 2 11c0 2.42.98 4.62 2.6 6.26L4 22l4.9-1.53c.99.3 2.03.46 3.1.46 5.52 0 10-4.02 10-9s-4.48-9-10-9z"/>
                 </svg>
               </a>
-              <a class="contact-btn brand viber" [href]="viberLink(r.phone)" title="Viber" aria-label="Otvori Viber">
+              <a class="contact-btn brand viber" [href]="viberLink(r.phone)" target="_blank" rel="noopener" title="Viber" aria-label="Otvori Viber">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="white" aria-hidden="true">
                   <path d="M12 2C6.48 2 2 6.02 2 11c0 2.42.98 4.62 2.6 6.26L4 22l4.9-1.53c.99.3 2.03.46 3.1.46 5.52 0 10-4.02 10-9s-4.48-9-10-9z"/>
                 </svg>
@@ -182,9 +193,19 @@
               </div>
             }
             @if (r.status === 'confirmed') {
-              <div class="row-actions">
-                <button class="btn reject" (click)="cancel(r)" [disabled]="actingOn() === r.id">Otkaži rezervaciju</button>
-              </div>
+              @if (confirmingCancelId() === r.id) {
+                <div class="confirm-inline">
+                  <span>Otkazati rezervaciju? Stol {{ r.tableLabel }} će ponovo postati slobodan.</span>
+                  <div class="confirm-inline-actions">
+                    <button class="text-btn" (click)="dismissCancel()">Odustani</button>
+                    <button class="text-btn danger" (click)="cancel(r)" [disabled]="actingOn() === r.id">Da, otkaži</button>
+                  </div>
+                </div>
+              } @else {
+                <div class="row-actions">
+                  <button class="btn reject" (click)="askCancel(r)" [disabled]="actingOn() === r.id">Otkaži rezervaciju</button>
+                </div>
+              }
             }
           </article>
         }

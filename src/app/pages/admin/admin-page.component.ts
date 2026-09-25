@@ -34,6 +34,7 @@ export class AdminPageComponent {
   loading = signal(false);
   reservations = signal<AdminReservation[]>([]);
   actingOn = signal<string | null>(null);
+  confirmingCancelId = signal<string | null>(null);
   filter = signal<StatusFilter>('pending');
   eventFilter = signal<string>('all');
   tableFilter = signal<string>('all');
@@ -48,6 +49,8 @@ export class AdminPageComponent {
   eventImageUrl = signal('');
   creatingEvent = signal(false);
   eventError = signal<string | null>(null);
+  confirmingDeleteEventId = signal<string | null>(null);
+  deleteEventError = signal<string | null>(null);
 
   passwordInput = '';
 
@@ -119,6 +122,7 @@ export class AdminPageComponent {
         this.authed.set(true);
         this.reservations.set(sortReservations(list));
         this.loading.set(false);
+        this.actingOn.set(null);
         this.loadEvents();
       },
       error: () => {
@@ -157,8 +161,16 @@ export class AdminPageComponent {
     });
   }
 
+  askCancel(r: AdminReservation) {
+    this.confirmingCancelId.set(r.id);
+  }
+
+  dismissCancel() {
+    this.confirmingCancelId.set(null);
+  }
+
   cancel(r: AdminReservation) {
-    if (!window.confirm(`Otkazati potvrđenu rezervaciju za "${r.fullName}"? Stol ${r.tableLabel} će ponovo postati slobodan.`)) return;
+    this.confirmingCancelId.set(null);
     this.actingOn.set(r.id);
     this.api.cancel(this.password(), r.id).subscribe({
       next: () => this.refresh(),
@@ -236,11 +248,24 @@ export class AdminPageComponent {
     });
   }
 
+  askDeleteEvent(ev: AdminEvent) {
+    this.deleteEventError.set(null);
+    this.confirmingDeleteEventId.set(ev.id);
+  }
+
+  dismissDeleteEvent() {
+    this.confirmingDeleteEventId.set(null);
+    this.deleteEventError.set(null);
+  }
+
   deleteEvent(ev: AdminEvent) {
-    if (!window.confirm(`Obrisati event "${ev.title}"? Ovo je moguće samo ako nema rezervacija.`)) return;
+    this.deleteEventError.set(null);
     this.api.deleteEvent(this.password(), ev.id).subscribe({
-      next: () => this.loadEvents(),
-      error: (e) => window.alert(e.error?.message ?? 'Event se ne može obrisati.'),
+      next: () => {
+        this.confirmingDeleteEventId.set(null);
+        this.loadEvents();
+      },
+      error: (e) => this.deleteEventError.set(e.error?.message ?? 'Event se ne može obrisati.'),
     });
   }
 

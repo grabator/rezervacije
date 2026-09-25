@@ -57,6 +57,10 @@
   <div><h1>{{ venue()?.name }}</h1><p>Izaberi event i rezerviši stol.</p></div>
 </header>
 
+@if (lastReservationId; as id) {
+  <a class="last-res" [routerLink]="['/r', venueSlug, 'rezervacije', 'status', id]">Provjeri svoju rezervaciju →</a>
+}
+
 <main class="list">
   @for (e of events(); track e.id) {
     <a class="ev" [routerLink]="['e', e.id]">

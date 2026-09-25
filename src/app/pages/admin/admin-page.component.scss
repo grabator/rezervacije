@@ -69,6 +69,16 @@ h1 { font-family: 'Playfair Display', Georgia, serif; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .text-btn { background: none; border: 0; color: var(--ivory-soft); font: 500 13px var(--font); cursor: pointer; padding: 8px 4px; }
 .text-btn:hover { color: var(--ivory); }
+.text-btn.danger { color: var(--rejected); font-weight: 700; }
+.text-btn.danger:hover { color: var(--rejected); opacity: .8; }
+
+.confirm-inline {
+  display: flex; flex-direction: column; gap: 8px; width: 100%;
+  padding: 10px 12px; border-radius: 6px; background: var(--noir-deep); border: 1px solid var(--rejected);
+}
+.confirm-inline span { font-size: 13px; color: var(--ivory); line-height: 1.4; }
+.confirm-inline em { font-style: normal; font-size: 12px; color: var(--rejected); }
+.confirm-inline-actions { display: flex; justify-content: flex-end; gap: 10px; }
 
 .events-panel {
   margin-bottom: 22px; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface);

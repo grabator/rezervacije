@@ -65,6 +65,9 @@ export class EventPageComponent {
         this.lastReservationId.set(res.reservationId);
         this.done.set(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        try {
+          localStorage.setItem('rezervacije-last', JSON.stringify({ venueSlug: this.venueSlug, id: res.reservationId }));
+        } catch { /* privatni prozor ili blokiran storage - link za status jednostavno nece biti ponudjen kasnije */ }
       },
       error: (e: Error) => { this.submitting.set(false); this.table.set(null); this.error.set(e.message); },
     });
