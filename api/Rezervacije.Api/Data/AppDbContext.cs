@@ -31,6 +31,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasForeignKey(t => t.EventId);
         modelBuilder.Entity<FloorTableEntity>()
             .HasIndex(t => new { t.EventId, t.TableKey }).IsUnique();
+        // Concurrency token na Status - sprecava da dva istovremena zahtjeva oba "uspiju"
+        // rezervisati isti sto (EF ubaci "WHERE Status = stara_vrijednost" u UPDATE; ako
+        // je neko drugi vec promijenio status u medjuvremenu, affected rows = 0 i EF baci
+        // DbUpdateConcurrencyException umjesto da tiho prepise podatke).
+        modelBuilder.Entity<FloorTableEntity>()
+            .Property(t => t.Status).IsConcurrencyToken();
 
         modelBuilder.Entity<Reservation>()
             .HasOne(r => r.Event)

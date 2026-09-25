@@ -151,7 +151,13 @@ export class AdminPageComponent {
     this.actingOn.set(r.id);
     this.api.confirm(this.password(), r.id).subscribe({
       next: () => this.refresh(),
-      error: () => this.actingOn.set(null),
+      error: (e) => {
+        this.actingOn.set(null);
+        // Neko drugi je vec obradio ovu rezervaciju (npr. gost je otkazao) - stara lista
+        // koju gleda admin nije tacna. Javi mu jasno i odmah osvjezi da vidi pravo stanje.
+        window.alert(e.error?.message ?? 'Rezervacija se više ne može potvrditi.');
+        this.refresh();
+      },
     });
   }
 
@@ -159,7 +165,11 @@ export class AdminPageComponent {
     this.actingOn.set(r.id);
     this.api.reject(this.password(), r.id).subscribe({
       next: () => this.refresh(),
-      error: () => this.actingOn.set(null),
+      error: (e) => {
+        this.actingOn.set(null);
+        window.alert(e.error?.message ?? 'Rezervacija se više ne može odbiti.');
+        this.refresh();
+      },
     });
   }
 
@@ -176,7 +186,11 @@ export class AdminPageComponent {
     this.actingOn.set(r.id);
     this.api.cancel(this.password(), r.id).subscribe({
       next: () => this.refresh(),
-      error: () => this.actingOn.set(null),
+      error: (e) => {
+        this.actingOn.set(null);
+        window.alert(e.error?.message ?? 'Rezervacija se više ne može otkazati.');
+        this.refresh();
+      },
     });
   }
 

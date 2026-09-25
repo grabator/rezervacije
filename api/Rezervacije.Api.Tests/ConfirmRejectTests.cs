@@ -84,4 +84,39 @@ public class ConfirmRejectTests : IClassFixture<TestApiFactory>
 
         Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
     }
+
+    [Fact]
+    public async Task Confirming_AlreadyConfirmedReservation_ReturnsBadRequest()
+    {
+        var id = await ReserveTable("S25");
+        (await _client.PostAsync($"/api/admin/reservations/{id}/confirm", null)).EnsureSuccessStatusCode();
+
+        var res = await _client.PostAsync($"/api/admin/reservations/{id}/confirm", null);
+
+        Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
+    }
+
+    [Fact]
+    public async Task Confirming_ReservationGuestAlreadyCancelled_ReturnsBadRequestAndDoesNotReLockTable()
+    {
+        var id = await ReserveTable("S27");
+        (await _client.PostAsync($"/api/reservations/{id}/cancel", null)).EnsureSuccessStatusCode();
+        Assert.Equal("free", await TableStatus("S27"));
+
+        var res = await _client.PostAsync($"/api/admin/reservations/{id}/confirm", null);
+
+        Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
+        Assert.Equal("free", await TableStatus("S27"));
+    }
+
+    [Fact]
+    public async Task Rejecting_AlreadyRejectedReservation_ReturnsBadRequest()
+    {
+        var id = await ReserveTable("S14");
+        (await _client.PostAsync($"/api/admin/reservations/{id}/reject", null)).EnsureSuccessStatusCode();
+
+        var res = await _client.PostAsync($"/api/admin/reservations/{id}/reject", null);
+
+        Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
+    }
 }

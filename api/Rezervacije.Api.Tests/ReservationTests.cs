@@ -103,4 +103,23 @@ public class ReservationTests : IClassFixture<TestApiFactory>
         var res = await _client.GetAsync($"/api/reservations/{Guid.NewGuid()}/status");
         Assert.Equal(HttpStatusCode.NotFound, res.StatusCode);
     }
+
+    [Fact]
+    public async Task ReservingSameTable_TrulyConcurrently_OnlyOneRequestSucceeds()
+    {
+        // Simulira dvoje-ili-vise ljudi koji kliknu "Pošalji zahtjev" za ISTI sto u
+        // praktično istom trenutku - ne sekvencijalno kao ostali testovi. Ovo je test
+        // za concurrency token na FloorTableEntity.Status (vidi AppDbContext).
+        var tasks = Enumerable.Range(0, 10)
+            .Select(_ => _client.PostAsJsonAsync("/api/reservations", ValidRequest("S26")))
+            .ToArray();
+
+        var results = await Task.WhenAll(tasks);
+
+        var successCount = results.Count(r => r.StatusCode == HttpStatusCode.OK);
+        var conflictCount = results.Count(r => r.StatusCode == HttpStatusCode.Conflict);
+
+        Assert.Equal(1, successCount);
+        Assert.Equal(9, conflictCount);
+    }
 }

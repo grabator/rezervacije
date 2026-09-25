@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Rezervacije.Api.Contracts;
@@ -13,6 +14,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddResponseCompression();
 builder.Services.AddHttpClient();
+
+// Kad app bude iza reverse proxy-a (nginx), Connection.RemoteIpAddress bi inace uvijek
+// bio proxy-jeva IP, ne gostova - sto bi pokvarilo rate-limit i brute-force zastitu (svi
+// gosti bi dijelili jedan "bucket"). Ovo cita pravu IP iz X-Forwarded-For koji nginx salje.
+// KnownNetworks/KnownProxies namjerno prazno - uobicajeno za jedan reverse proxy ispred
+// jedne app instance; app ne smije biti direktno javno dostupna mimo proxy-ja.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("Default") ?? "Data Source=rezervacije.db"));
@@ -64,6 +77,10 @@ var telegramChatId = builder.Configuration["Telegram:ChatId"];
 
 var app = builder.Build();
 var logger = app.Logger;
+
+// Mora biti medju prvim middleware-ima - sve dalje (rate limiter, admin brute-force
+// zastita) oslanja se na to da je RemoteIpAddress do sad vec prepisan na pravu IP gosta.
+app.UseForwardedHeaders();
 
 async Task NotifyAdminViaTelegram(string text, IHttpClientFactory httpFactory)
 {
@@ -210,8 +227,20 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
         CreatedAt = DateTime.UtcNow,
     };
     db.Reservations.Add(reservation);
-    await db.SaveChangesAsync();
-    await tx.CommitAsync();
+
+    try
+    {
+        await db.SaveChangesAsync();
+        await tx.CommitAsync();
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        // Neko drugi je u istom trenutku rezervisao isti stol - status kolona je concurrency
+        // token pa EF ovo prepozna umjesto da tiho dozvoli dvije rezervacije za isti sto.
+        await tx.RollbackAsync();
+        logger.LogWarning("Konkurentski pokusaj rezervacije istog stola {TableId} za event {EventId}", req.TableId, req.EventId);
+        return Results.Conflict(new { message = "Ovaj stol je u međuvremenu zauzet. Izaberi drugi." });
+    }
 
     logger.LogInformation("Nova rezervacija {Id}: stol {TableId} za event {EventId}", reservation.Id, req.TableId, req.EventId);
 
@@ -289,6 +318,9 @@ admin.MapPost("/reservations/{id}/confirm", async (Guid id, AppDbContext db) =>
 {
     var res = await db.Reservations.FindAsync(id);
     if (res is null) return Results.NotFound();
+    if (res.Status != "pending")
+        return Results.BadRequest(new { message = "Rezervacija više nije na čekanju - neko ju je već obradio ili je gost otkazao. Osvježi listu." });
+
     var table = await db.Tables.FindAsync(res.TableEntityId);
     res.Status = "confirmed";
     if (table is not null) table.Status = "taken";
@@ -301,6 +333,9 @@ admin.MapPost("/reservations/{id}/reject", async (Guid id, AppDbContext db) =>
 {
     var res = await db.Reservations.FindAsync(id);
     if (res is null) return Results.NotFound();
+    if (res.Status != "pending")
+        return Results.BadRequest(new { message = "Rezervacija više nije na čekanju - neko ju je već obradio ili je gost otkazao. Osvježi listu." });
+
     var table = await db.Tables.FindAsync(res.TableEntityId);
     res.Status = "rejected";
     if (table is not null) table.Status = "free";
