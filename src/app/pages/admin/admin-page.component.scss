@@ -122,6 +122,9 @@ h1 { font-family: 'Playfair Display', Georgia, serif; }
 }
 .select-field select:focus { outline: none; border-color: var(--gold); }
 
+.export-row { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+.export-row .text-btn { padding: 6px 2px; }
+
 .empty { text-align: center; color: var(--ivory-soft); padding: 70px 0; font-size: 14px; }
 
 .list { display: grid; gap: 12px; }

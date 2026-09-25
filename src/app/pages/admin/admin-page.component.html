@@ -123,6 +123,12 @@
       </label>
     }
 
+    @if (filtered().length > 0) {
+      <div class="export-row">
+        <button class="text-btn" (click)="exportCsv()">Izvoz u CSV ({{ filtered().length }})</button>
+      </div>
+    }
+
     @if (filtered().length === 0) {
       <p class="empty">
         @if (filter() === 'pending') { Nema zahtjeva na čekanju. }

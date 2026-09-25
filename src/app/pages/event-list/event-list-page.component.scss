@@ -6,19 +6,22 @@
   .bg-hookah { left: 50%; width: 480px; margin-left: -240px; }
 }
 
-.puff { transform-box: fill-box; transform-origin: center; fill: var(--ink-soft); opacity: 0; animation: smokeRise 7s ease-out infinite; }
-.puff1 { animation-delay: 0s; --drift: 20px; }
-.puff2 { animation-delay: 1.15s; --drift: -28px; }
-.puff3 { animation-delay: 2.3s; --drift: 32px; }
-.puff4 { animation-delay: 3.45s; --drift: -16px; }
-.puff5 { animation-delay: 4.6s; --drift: 12px; }
-.puff6 { animation-delay: 5.75s; --drift: -34px; }
+.puff { transform-box: fill-box; transform-origin: center; fill: var(--ink-soft); opacity: 0; animation: smokeRise 8s ease-out infinite; }
+.puff1 { animation-delay: 0s; --drift: 26px; }
+.puff2 { animation-delay: 1s; --drift: -34px; }
+.puff3 { animation-delay: 2s; --drift: 40px; }
+.puff4 { animation-delay: 3s; --drift: -22px; }
+.puff5 { animation-delay: 4s; --drift: 18px; }
+.puff6 { animation-delay: 5s; --drift: -44px; }
+.puff7 { animation-delay: 6s; --drift: 30px; }
+.puff8 { animation-delay: 7s; --drift: -16px; }
 
 @keyframes smokeRise {
   0% { transform: translate(0, 0) scale(.5); opacity: 0; }
-  10% { opacity: .4; }
-  55% { opacity: .22; }
-  100% { transform: translate(var(--drift), -380px) scale(2.6); opacity: 0; }
+  8% { opacity: .44; }
+  60% { opacity: .3; }
+  85% { opacity: .14; }
+  100% { transform: translate(var(--drift), -480px) scale(3.2); opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .puff { animation: none; opacity: .12; }

@@ -51,3 +51,4 @@ api/**/*.db
 api/**/*.db-shm
 api/**/*.db-wal
 api/**/appsettings.Production.json
+api/backups/

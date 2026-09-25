@@ -13,12 +13,14 @@
     <ellipse cx="200" cy="600" rx="220" ry="320" fill="url(#glow)" />
 
     <g class="smoke" filter="url(#smokeBlur)">
-      <circle class="puff puff1" cx="200" cy="400" r="26" />
-      <circle class="puff puff2" cx="190" cy="400" r="20" />
-      <circle class="puff puff3" cx="212" cy="400" r="22" />
-      <circle class="puff puff4" cx="198" cy="400" r="18" />
-      <circle class="puff puff5" cx="206" cy="400" r="24" />
-      <circle class="puff puff6" cx="192" cy="400" r="16" />
+      <circle class="puff puff1" cx="200" cy="360" r="26" />
+      <circle class="puff puff2" cx="190" cy="360" r="20" />
+      <circle class="puff puff3" cx="212" cy="360" r="22" />
+      <circle class="puff puff4" cx="198" cy="360" r="18" />
+      <circle class="puff puff5" cx="206" cy="360" r="24" />
+      <circle class="puff puff6" cx="192" cy="360" r="16" />
+      <circle class="puff puff7" cx="203" cy="360" r="20" />
+      <circle class="puff puff8" cx="196" cy="360" r="15" />
     </g>
 
     <!-- cijev se crta PRIJE tijela, pa je bokal (crtan poslije, neproziran) dijelom prekriva - kao na referenci -->
@@ -31,10 +33,10 @@
     </g>
 
     <g class="silhouette" fill="var(--ink-soft)" fill-opacity=".12" stroke="none">
-      <!-- zdjelica (gornji okrugli dio) -->
-      <circle cx="200" cy="400" r="19" />
-      <path d="M193,418 L207,418 L204,432 L196,432 Z" />
-      <!-- tacna/poslužavnik ispod zdjelice, sa zasiljenim krajevima -->
+      <!-- cup (glinena glava za duhan) - uzak klasican oblik -->
+      <ellipse cx="200" cy="364" rx="20" ry="4" />
+      <path d="M182,365 C181,361 219,361 218,365 L214,380 C212,394 210,403 207,417 L193,417 C190,403 188,394 186,380 Z" />
+      <!-- tacna/poslužavnik ispod čupa, sa zasiljenim krajevima -->
       <path d="M104,444 Q200,417 296,444 Q200,468 104,444 Z" />
       <!-- struk (peščani sat oblik) -->
       <path d="M186,452 C178,474 172,500 180,520 C184,533 192,540 200,543

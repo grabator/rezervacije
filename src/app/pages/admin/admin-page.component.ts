@@ -243,6 +243,23 @@ export class AdminPageComponent {
       error: (e) => window.alert(e.error?.message ?? 'Event se ne može obrisati.'),
     });
   }
+
+  exportCsv() {
+    const rows = this.filtered();
+    const header = ['Event', 'Stol', 'Ime i prezime', 'Telefon', 'Email', 'Napomena', 'Status', 'Poslano'];
+    const csvRows = [header, ...rows.map(r => [
+      r.eventTitle, r.tableLabel, r.fullName, r.phone, r.email, r.note ?? '', this.statusLabel(r.status), r.createdAt,
+    ])];
+    const csv = csvRows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+    // BOM na početku - bez njega Excel pogrešno čita č/ć/š/ž/đ.
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rezervacije-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
 
 function sortReservations(list: AdminReservation[]): AdminReservation[] {
