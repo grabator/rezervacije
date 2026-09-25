@@ -10,44 +10,47 @@
       </radialGradient>
     </defs>
 
-    <ellipse cx="200" cy="600" rx="220" ry="320" fill="url(#glow)" />
+    <ellipse cx="200" cy="700" rx="220" ry="320" fill="url(#glow)" />
 
-    <g class="smoke" filter="url(#smokeBlur)">
-      <circle class="puff puff1" cx="200" cy="360" r="26" />
-      <circle class="puff puff2" cx="190" cy="360" r="20" />
-      <circle class="puff puff3" cx="212" cy="360" r="22" />
-      <circle class="puff puff4" cx="198" cy="360" r="18" />
-      <circle class="puff puff5" cx="206" cy="360" r="24" />
-      <circle class="puff puff6" cx="192" cy="360" r="16" />
-      <circle class="puff puff7" cx="203" cy="360" r="20" />
-      <circle class="puff puff8" cx="196" cy="360" r="15" />
-    </g>
+    <!-- cijela nargila pomjerena blize dnu ekrana - dim krece odozdo i penje se gore -->
+    <g transform="translate(0, 150)">
+      <g class="smoke" filter="url(#smokeBlur)">
+        <circle class="puff puff1" cx="200" cy="360" r="26" />
+        <circle class="puff puff2" cx="190" cy="360" r="20" />
+        <circle class="puff puff3" cx="212" cy="360" r="22" />
+        <circle class="puff puff4" cx="198" cy="360" r="18" />
+        <circle class="puff puff5" cx="206" cy="360" r="24" />
+        <circle class="puff puff6" cx="192" cy="360" r="16" />
+        <circle class="puff puff7" cx="203" cy="360" r="20" />
+        <circle class="puff puff8" cx="196" cy="360" r="15" />
+      </g>
 
-    <!-- cijev se crta PRIJE tijela, pa je bokal (crtan poslije, neproziran) dijelom prekriva - kao na referenci -->
-    <g class="hose" fill="none" stroke="var(--ink-soft)" stroke-opacity=".15" stroke-width="7" stroke-linecap="round">
-      <path d="M151,616 C115,589 117,526 155,500 C191,477 236,497 234,531
-        C232,558 205,560 195,542
-        C211,569 261,598 261,652 C261,686 277,704 281,724" />
-      <circle cx="281" cy="726" r="5" fill="var(--ink-soft)" fill-opacity=".15" stroke="none" />
-    </g>
+      <!-- cijev se crta PRIJE tijela, pa je bokal (crtan poslije, neproziran) dijelom prekriva - kao na referenci -->
+      <g class="hose" fill="none" stroke="var(--ink-soft)" stroke-opacity=".15" stroke-width="7" stroke-linecap="round">
+        <path d="M151,616 C115,589 117,526 155,500 C191,477 236,497 234,531
+          C232,558 205,560 195,542
+          C211,569 261,598 261,652 C261,686 277,704 281,724" />
+        <circle cx="281" cy="726" r="5" fill="var(--ink-soft)" fill-opacity=".15" stroke="none" />
+      </g>
 
-    <g class="silhouette" fill="var(--ink-soft)" fill-opacity=".12" stroke="none">
-      <!-- cup (glinena glava za duhan) - uzak klasican oblik -->
-      <ellipse cx="200" cy="359" rx="23" ry="4.5" />
-      <path d="M178,360 C177,356 223,356 222,360 L217,380 C215,394 213,403 209,414 L191,414 C187,403 185,394 183,380 Z" />
-      <!-- tacna/poslužavnik ispod čupa, sa zasiljenim krajevima -->
-      <path d="M126,418 Q200,403 274,418 Q200,432 126,418 Z" />
-      <!-- vrat (peščani sat oblik) -->
-      <path d="M187,425 C181,454 181,481 191,509 C181,533 179,545 187,554
-        L213,554 C221,545 219,533 209,509 C219,481 219,454 214,425 Z" />
-      <!-- mali ventil -->
-      <path d="M213,531 L231,523 L232,528 L214,537 Z" />
-      <!-- vitko tijelo (boca za vodu) -->
-      <path d="M187,554 C159,574 146,605 148,638 C150,677 164,698 178,709
-        L222,709 C236,698 250,677 252,638
-        C254,605 241,574 213,554 Z" />
-      <!-- noga/postolje -->
-      <ellipse cx="200" cy="713" rx="34" ry="6" />
+      <g class="silhouette" fill="var(--ink-soft)" fill-opacity=".12" stroke="none">
+        <!-- cup (glinena glava za duhan) - uzak klasican oblik -->
+        <ellipse cx="200" cy="359" rx="23" ry="4.5" />
+        <path d="M178,360 C177,356 223,356 222,360 L217,380 C215,394 213,403 209,414 L191,414 C187,403 185,394 183,380 Z" />
+        <!-- tacna/poslužavnik ispod čupa, sa zasiljenim krajevima -->
+        <path d="M126,418 Q200,403 274,418 Q200,432 126,418 Z" />
+        <!-- vrat (peščani sat oblik) -->
+        <path d="M187,425 C181,454 181,481 191,509 C181,533 179,545 187,554
+          L213,554 C221,545 219,533 209,509 C219,481 219,454 214,425 Z" />
+        <!-- mali ventil -->
+        <path d="M213,531 L231,523 L232,528 L214,537 Z" />
+        <!-- vitko tijelo (boca za vodu) -->
+        <path d="M187,554 C159,574 146,605 148,638 C150,677 164,698 178,709
+          L222,709 C236,698 250,677 252,638
+          C254,605 241,574 213,554 Z" />
+        <!-- noga/postolje -->
+        <ellipse cx="200" cy="713" rx="34" ry="6" />
+      </g>
     </g>
   </svg>
 </div>
