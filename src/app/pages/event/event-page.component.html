@@ -23,6 +23,7 @@
         <div class="tick" aria-hidden="true">✓</div>
         <h2>Zahtjev je poslan</h2>
         <p>Stol <b>{{ table()?.label }}</b> je rezervisan za tebe. Rezervacija važi tek kad je lokal potvrdi - javljamo se na <b>{{ form.controls.phone.value }}</b>.</p>
+        <p class="hold-notice">Stol se čuva do 30 minuta nakon početka eventa - dođi na vrijeme.</p>
         @if (lastReservationId(); as id) {
           <a class="status-link" [routerLink]="['/r', venueSlug, 'rezervacije', 'status', id]">Provjeri status rezervacije</a>
         }
@@ -77,6 +78,8 @@
         <div class="summary" [class.ready]="table()">
           <b>{{ table() ? 'Stol ' + table()!.label : 'Stol nije izabran' }}</b>
         </div>
+
+        <p class="hold-notice">Stol se čuva do 30 minuta nakon početka eventa - nakon toga može biti dodijeljen drugom gostu.</p>
 
         @if (error()) { <p class="err" role="alert">{{ error() }}</p> }
         <button class="cta" type="submit" [disabled]="submitting()">
