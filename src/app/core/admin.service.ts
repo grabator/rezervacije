@@ -10,7 +10,6 @@ export interface AdminReservation {
   tableLabel: string;
   fullName: string;
   phone: string;
-  email: string;
   note?: string;
   status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
   createdAt: string;

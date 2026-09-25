@@ -23,7 +23,6 @@ public class ConfirmRejectTests : IClassFixture<TestApiFactory>
             tableId,
             fullName = "Test Gost",
             phone = "+38761234567",
-            email = "gost@test.com",
         });
         res.EnsureSuccessStatusCode();
         var body = await res.Content.ReadFromJsonAsync<JsonElement>();

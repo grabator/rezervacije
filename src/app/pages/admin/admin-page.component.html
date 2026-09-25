@@ -149,9 +149,28 @@
               <span class="table-badge">{{ r.tableLabel }}</span>
               <h2>{{ r.fullName }}</h2>
             </div>
-            <div class="meta">
-              <a [href]="'tel:' + r.phone">{{ r.phone }}</a>
-              <a [href]="'mailto:' + r.email">{{ r.email }}</a>
+            <div class="contact-row">
+              <span class="phone-text">{{ r.phone }}</span>
+              <a class="contact-btn" [href]="'tel:' + r.phone" title="Pozovi" aria-label="Pozovi">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </a>
+              <a class="contact-btn" [href]="'sms:' + r.phone" title="Pošalji SMS" aria-label="Pošalji SMS">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </a>
+              <a class="contact-btn brand whatsapp" [href]="whatsappLink(r.phone)" target="_blank" rel="noopener" title="WhatsApp" aria-label="Otvori WhatsApp">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="white" aria-hidden="true">
+                  <path d="M12 2C6.48 2 2 6.02 2 11c0 2.42.98 4.62 2.6 6.26L4 22l4.9-1.53c.99.3 2.03.46 3.1.46 5.52 0 10-4.02 10-9s-4.48-9-10-9z"/>
+                </svg>
+              </a>
+              <a class="contact-btn brand viber" [href]="viberLink(r.phone)" title="Viber" aria-label="Otvori Viber">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="white" aria-hidden="true">
+                  <path d="M12 2C6.48 2 2 6.02 2 11c0 2.42.98 4.62 2.6 6.26L4 22l4.9-1.53c.99.3 2.03.46 3.1.46 5.52 0 10-4.02 10-9s-4.48-9-10-9z"/>
+                </svg>
+              </a>
             </div>
             @if (r.note) { <p class="note">„{{ r.note }}"</p> }
             <p class="when">{{ r.createdAt | date: 'd.M.yyyy. HH:mm' }}</p>

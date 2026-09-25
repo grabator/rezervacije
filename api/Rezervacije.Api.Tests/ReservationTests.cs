@@ -14,13 +14,12 @@ public class ReservationTests : IClassFixture<TestApiFactory>
         _client = factory.CreateClient();
     }
 
-    private static object ValidRequest(string tableId, string? fullName = null, string? email = null, string? phone = null) => new
+    private static object ValidRequest(string tableId, string? fullName = null, string? phone = null) => new
     {
         eventId = "poljska-bih",
         tableId,
         fullName = fullName ?? "Test Gost",
         phone = phone ?? "+38761234567",
-        email = email ?? "gost@test.com",
     };
 
     [Fact]
@@ -53,13 +52,12 @@ public class ReservationTests : IClassFixture<TestApiFactory>
     }
 
     [Theory]
-    [InlineData("", "gost@test.com", "+38761234567")]      // prazno ime
-    [InlineData("ab", "gost@test.com", "+38761234567")]    // prekratko ime
-    [InlineData("Test Gost", "nije-email", "+38761234567")] // neispravan email
-    [InlineData("Test Gost", "gost@test.com", "123")]       // prekratak telefon
-    public async Task Reserving_WithInvalidInput_ReturnsBadRequest(string name, string email, string phone)
+    [InlineData("", "+38761234567")]     // prazno ime
+    [InlineData("ab", "+38761234567")]   // prekratko ime
+    [InlineData("Test Gost", "123")]     // prekratak telefon
+    public async Task Reserving_WithInvalidInput_ReturnsBadRequest(string name, string phone)
     {
-        var res = await _client.PostAsJsonAsync("/api/reservations", ValidRequest("S5", name, email, phone));
+        var res = await _client.PostAsJsonAsync("/api/reservations", ValidRequest("S5", name, phone));
         Assert.Equal(HttpStatusCode.BadRequest, res.StatusCode);
     }
 
@@ -72,7 +70,6 @@ public class ReservationTests : IClassFixture<TestApiFactory>
             tableId = "S15",
             fullName = "Bot Test",
             phone = "+38761234567",
-            email = "bot@test.com",
             hp = "im-a-bot",
         };
 

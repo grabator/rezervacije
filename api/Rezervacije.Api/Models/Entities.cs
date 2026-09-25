@@ -63,7 +63,6 @@ public class Reservation
     public FloorTableEntity? Table { get; set; }
     public string FullName { get; set; } = "";
     public string Phone { get; set; } = "";
-    public string Email { get; set; } = "";
     public string? Note { get; set; }
     public string Status { get; set; } = "pending";
     public DateTime CreatedAt { get; set; }

@@ -50,7 +50,6 @@ export interface ReservationRequest {
   tableId: string;
   fullName: string;
   phone: string;
-  email: string;
   note?: string;
   hp?: string;
 }

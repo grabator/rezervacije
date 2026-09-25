@@ -22,7 +22,7 @@
       <section class="card done" aria-live="polite">
         <div class="tick" aria-hidden="true">✓</div>
         <h2>Zahtjev je poslan</h2>
-        <p>Stol <b>{{ table()?.label }}</b> je rezervisan za tebe. Rezervacija važi tek kad ti je lokal potvrdi na <b>{{ form.controls.email.value }}</b>.</p>
+        <p>Stol <b>{{ table()?.label }}</b> je rezervisan za tebe. Rezervacija važi tek kad je lokal potvrdi - javljamo se na <b>{{ form.controls.phone.value }}</b>.</p>
         @if (lastReservationId(); as id) {
           <a class="status-link" [routerLink]="['/r', venueSlug, 'rezervacije', 'status', id]">Provjeri status rezervacije</a>
         }
@@ -56,11 +56,6 @@
           <input formControlName="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+387 6x xxx xxx" />
           @if (invalid('phone')) { <em>Upiši broj telefona, npr. +387 61 234 567.</em> }
         </label>
-        <label class="field" [class.bad]="invalid('email')">
-          <span>Email</span>
-          <input formControlName="email" type="email" inputmode="email" autocomplete="email" />
-          @if (invalid('email')) { <em>Upiši ispravan email, na njega stiže potvrda.</em> }
-        </label>
         <label class="field">
           <span>Napomena <i>(opciono)</i></span>
           <textarea formControlName="note" rows="3"></textarea>
@@ -74,8 +69,8 @@
         <label class="check" [class.bad]="invalid('terms')">
           <input type="checkbox" formControlName="terms" />
           <span>
-            Slažem se da se moji podaci (ime, telefon, email) koriste isključivo za potrebe ove rezervacije, u skladu s
-            <a routerLink="/privatnost" target="_blank" rel="noopener">politikom privatnosti</a>. Rezervacija nije potvrđena dok je lokal ne potvrdi mailom.
+            Slažem se da se moji podaci (ime, telefon) koriste isključivo za potrebe ove rezervacije, u skladu s
+            <a routerLink="/privatnost" target="_blank" rel="noopener">politikom privatnosti</a>. Rezervacija nije potvrđena dok je lokal ne potvrdi.
           </span>
         </label>
 

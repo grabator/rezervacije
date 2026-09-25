@@ -18,7 +18,7 @@ public record VenueEventDto(
     FloorPlanDto FloorPlan
 );
 
-public record ReservationRequestDto(string EventId, string TableId, string FullName, string Phone, string Email, string? Note, string? Hp = null);
+public record ReservationRequestDto(string EventId, string TableId, string FullName, string Phone, string? Note, string? Hp = null);
 
 public record ReservationResultDto(string ReservationId, string Status);
 
@@ -31,7 +31,6 @@ public record AdminReservationDto(
     string TableLabel,
     string FullName,
     string Phone,
-    string Email,
     string? Note,
     string Status,
     DateTime CreatedAt

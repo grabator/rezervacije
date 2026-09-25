@@ -246,9 +246,9 @@ export class AdminPageComponent {
 
   exportCsv() {
     const rows = this.filtered();
-    const header = ['Event', 'Stol', 'Ime i prezime', 'Telefon', 'Email', 'Napomena', 'Status', 'Poslano'];
+    const header = ['Event', 'Stol', 'Ime i prezime', 'Telefon', 'Napomena', 'Status', 'Poslano'];
     const csvRows = [header, ...rows.map(r => [
-      r.eventTitle, r.tableLabel, r.fullName, r.phone, r.email, r.note ?? '', this.statusLabel(r.status), r.createdAt,
+      r.eventTitle, r.tableLabel, r.fullName, r.phone, r.note ?? '', this.statusLabel(r.status), r.createdAt,
     ])];
     const csv = csvRows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\r\n');
     // BOM na početku - bez njega Excel pogrešno čita č/ć/š/ž/đ.
@@ -259,6 +259,14 @@ export class AdminPageComponent {
     a.download = `rezervacije-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  whatsappLink(phone: string): string {
+    return `https://wa.me/${phone.replace(/[^\d]/g, '')}`;
+  }
+
+  viberLink(phone: string): string {
+    return `viber://chat?number=%2B${phone.replace(/[^\d]/g, '')}`;
   }
 }
 

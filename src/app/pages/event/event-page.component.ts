@@ -33,7 +33,6 @@ export class EventPageComponent {
   form = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
     phone: ['', [Validators.required, Validators.pattern(/^\+?[0-9 /-]{8,}$/)]],
-    email: ['', [Validators.required, Validators.email]],
     note: [''],
     terms: [false, Validators.requiredTrue],
     hp: [''],
@@ -58,7 +57,7 @@ export class EventPageComponent {
     this.submitting.set(true);
     this.api.reserve({
       eventId: ev.id, tableId: this.table()!.id,
-      fullName: v.fullName.trim(), phone: v.phone.trim(), email: v.email.trim(), note: v.note.trim() || undefined,
+      fullName: v.fullName.trim(), phone: v.phone.trim(), note: v.note.trim() || undefined,
       hp: v.hp || undefined,
     }).subscribe({
       next: (res) => {

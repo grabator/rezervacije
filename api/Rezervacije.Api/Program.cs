@@ -164,8 +164,6 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
         return Results.BadRequest(new { message = "Upiši ime i prezime." });
     if (string.IsNullOrWhiteSpace(req.Phone) || req.Phone.Trim().Length < 6)
         return Results.BadRequest(new { message = "Upiši ispravan broj telefona." });
-    if (string.IsNullOrWhiteSpace(req.Email) || !req.Email.Contains('@') || !req.Email.Contains('.'))
-        return Results.BadRequest(new { message = "Upiši ispravan email." });
     if (string.IsNullOrWhiteSpace(req.EventId) || string.IsNullOrWhiteSpace(req.TableId))
         return Results.BadRequest(new { message = "Nedostaju podaci o eventu ili stolu." });
 
@@ -185,7 +183,6 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
         TableEntityId = table.Id,
         FullName = req.FullName,
         Phone = req.Phone,
-        Email = req.Email,
         Note = req.Note,
         Status = "pending",
         CreatedAt = DateTime.UtcNow,
@@ -254,7 +251,6 @@ admin.MapGet("/reservations", async (AppDbContext db) =>
             TableLabel = db.Tables.Where(t => t.Id == r.TableEntityId).Select(t => t.Label).FirstOrDefault(),
             r.FullName,
             r.Phone,
-            r.Email,
             r.Note,
             r.Status,
             r.CreatedAt,
@@ -263,7 +259,7 @@ admin.MapGet("/reservations", async (AppDbContext db) =>
 
     var dtos = list.Select(r => new AdminReservationDto(
         r.Id.ToString(), r.EventId, r.EventTitle ?? "", r.TableLabel ?? "",
-        r.FullName, r.Phone, r.Email, r.Note, r.Status, r.CreatedAt));
+        r.FullName, r.Phone, r.Note, r.Status, r.CreatedAt));
     return Results.Ok(dtos);
 });
 

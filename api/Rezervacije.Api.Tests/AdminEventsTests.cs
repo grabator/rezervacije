@@ -75,7 +75,6 @@ public class AdminEventsTests : IClassFixture<TestApiFactory>
             tableId = "S20",
             fullName = "Test Gost",
             phone = "+38761234567",
-            email = "gost@test.com",
         });
 
         var res = await _client.DeleteAsync("/api/admin/events/poljska-bih");
