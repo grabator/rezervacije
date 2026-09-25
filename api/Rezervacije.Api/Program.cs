@@ -166,7 +166,7 @@ app.MapPost("/api/reservations/{id}/cancel", async (Guid id, AppDbContext db, IH
     logger.LogInformation("Gost otkazao rezervaciju {Id}, stol oslobodjen", id);
 
     var eventTitle = await db.Events.Where(e => e.Id == res.EventId).Select(e => e.Title).FirstOrDefaultAsync();
-    var notifyText = $"❌ Gost je otkazao rezervaciju\n📅 {eventTitle}\n🪑 Sto {table?.Label}\n👤 {res.FullName}\n📞 {res.Phone}";
+    var notifyText = $"❌ Gost je otkazao rezervaciju\n📅 {eventTitle}\n🪑 Stol {table?.Label}\n👤 {res.FullName}\n📞 {res.Phone}";
     await NotifyAdminViaTelegram(notifyText, httpFactory);
 
     return Results.Ok();
@@ -216,7 +216,7 @@ app.MapPost("/api/reservations", async (ReservationRequestDto req, AppDbContext 
     logger.LogInformation("Nova rezervacija {Id}: stol {TableId} za event {EventId}", reservation.Id, req.TableId, req.EventId);
 
     var eventTitle = await db.Events.Where(e => e.Id == req.EventId).Select(e => e.Title).FirstOrDefaultAsync();
-    var notifyText = $"🔔 Nova rezervacija\n📅 {eventTitle}\n🪑 Sto {req.TableId}\n👤 {req.FullName}\n📞 {req.Phone}"
+    var notifyText = $"🔔 Nova rezervacija\n📅 {eventTitle}\n🪑 Stol {req.TableId}\n👤 {req.FullName}\n📞 {req.Phone}"
         + (string.IsNullOrWhiteSpace(req.Note) ? "" : $"\n💬 {req.Note}");
     await NotifyAdminViaTelegram(notifyText, httpFactory);
 

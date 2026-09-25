@@ -294,7 +294,7 @@ export class AdminPageComponent {
 
   confirmedMessage(r: AdminReservation): string {
     return `Zdravo ${r.fullName}, tvoja rezervacija u Exclusive Caffe Loungeu je potvrđena.\n`
-      + `${r.eventTitle} - sto ${r.tableLabel}.\n`
+      + `${r.eventTitle} - stol ${r.tableLabel}.\n`
       + `Status/otkazivanje: ${this.statusLink(r)}`;
   }
 
